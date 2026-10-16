@@ -3,9 +3,8 @@ title: Météo & IA Tunisie — 24 Gouvernorats
 emoji: 🌤️
 colorFrom: blue
 colorTo: green
-sdk: streamlit
-sdk_version: 1.52.2
-app_file: app.py
+sdk: docker
+app_port: 7860
 pinned: true
 license: mit
 short_description: Prévisions météo ML + Chatbot IA 100% en Dialecte Tunisien (Derja)

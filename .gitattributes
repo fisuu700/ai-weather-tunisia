@@ -1,0 +1,5 @@
+# Tracking Git LFS pour les gros fichiers modèles (> 10 MB)
+# Hugging Face exige Git LFS pour les fichiers > 10 MB
+*.pkl filter=lfs diff=lfs merge=lfs -text
+*.pkl.lz4 filter=lfs diff=lfs merge=lfs -text
+*.joblib filter=lfs diff=lfs merge=lfs -text

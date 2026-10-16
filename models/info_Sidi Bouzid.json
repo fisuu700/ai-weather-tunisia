@@ -1,0 +1,351 @@
+{
+  "ville": "Sidi Bouzid",
+  "lat": 35.0382,
+  "lon": 9.4849,
+  "features": [
+    "day",
+    "month",
+    "dayofyear",
+    "season",
+    "dayofyear_sin",
+    "dayofyear_cos",
+    "month_sin",
+    "month_cos",
+    "day_sin",
+    "day_cos",
+    "tmax_lag_1",
+    "tmax_lag_2",
+    "tmax_lag_3",
+    "tmax_lag_7",
+    "tmin_lag_1",
+    "tmin_lag_2",
+    "tmin_lag_3",
+    "tmin_lag_7",
+    "pres_lag_1",
+    "pres_lag_2",
+    "pres_lag_3",
+    "pres_lag_7",
+    "rhum_lag_1",
+    "rhum_lag_2",
+    "rhum_lag_3",
+    "rhum_lag_7",
+    "wspd_lag_1",
+    "wspd_lag_2",
+    "wspd_lag_3",
+    "wspd_lag_7",
+    "tmax_roll_3",
+    "tmax_roll_7",
+    "prcp_roll_3",
+    "prcp_roll_7"
+  ],
+  "cibles_regression": [
+    "tmax",
+    "tmin",
+    "rhum",
+    "wspd",
+    "pres"
+  ],
+  "periode": {
+    "debut": "2010-01-08",
+    "fin": "2026-10-14"
+  },
+  "split": {
+    "train_fin": "2024-10-14",
+    "test_debut": "2024-10-15",
+    "annees_test": 2
+  },
+  "date_entrainement": "2026-10-15",
+  "seuil_pluie_mm": 1.0,
+  "niveau_intervalle": 0.9,
+  "modeles": {
+    "tmax": "GradientBoosting",
+    "tmin": "GradientBoosting",
+    "rhum": "RandomForest",
+    "wspd": "GradientBoosting",
+    "pres": "GradientBoosting",
+    "rain": "RandomForest"
+  },
+  "intervalles": {
+    "tmax": {
+      "niveau": 0.9,
+      "q_bas": -3.6636397157054783,
+      "q_haut": 4.164706768836279,
+      "std": 2.3832339890555354,
+      "mae": 1.8190918091168142,
+      "methode": "quantiles résiduels (jeu de test)"
+    },
+    "tmin": {
+      "niveau": 0.9,
+      "q_bas": -1.9867934997442465,
+      "q_haut": 2.8785592589400912,
+      "std": 1.500147128360094,
+      "mae": 1.2004853753442783,
+      "methode": "quantiles résiduels (jeu de test)"
+    },
+    "rhum": {
+      "niveau": 0.9,
+      "q_bas": -12.598844020562758,
+      "q_haut": 14.64252247023811,
+      "std": 8.367894331454565,
+      "mae": 6.421483114545274,
+      "methode": "quantiles résiduels (jeu de test)"
+    },
+    "wspd": {
+      "niveau": 0.9,
+      "q_bas": -5.22348019694215,
+      "q_haut": 10.201827504798137,
+      "std": 4.874235473956679,
+      "mae": 3.9723926694803495,
+      "methode": "quantiles résiduels (jeu de test)"
+    },
+    "pres": {
+      "niveau": 0.9,
+      "q_bas": -4.27338383012613,
+      "q_haut": 4.13148869693899,
+      "std": 2.67466316770638,
+      "mae": 1.9908272073073283,
+      "methode": "quantiles résiduels (jeu de test)"
+    }
+  },
+  "tmax": {
+    "nom_modele": "GradientBoosting",
+    "metriques_test": {
+      "MAE": 1.8190918091168142,
+      "RMSE": 2.399085641046153,
+      "R2": 0.9177569016989436
+    },
+    "metriques_train": {
+      "MAE": 1.6511670405432892,
+      "RMSE": 2.140772591787367,
+      "R2": 0.9335512812248522
+    },
+    "intervalle_confiance": {
+      "niveau": 0.9,
+      "q_bas": -3.6636397157054783,
+      "q_haut": 4.164706768836279,
+      "std": 2.3832339890555354,
+      "mae": 1.8190918091168142,
+      "methode": "quantiles résiduels (jeu de test)"
+    }
+  },
+  "comparaison_tmax": [
+    {
+      "modèle": "RandomForest",
+      "MAE": 1.8362920378603518,
+      "RMSE": 2.4242158795749535,
+      "R2": 0.9160248973313311
+    },
+    {
+      "modèle": "GradientBoosting",
+      "MAE": 1.8190918091168142,
+      "RMSE": 2.399085641046153,
+      "R2": 0.9177569016989436
+    },
+    {
+      "modèle": "XGBoost",
+      "MAE": 1.8455113277696582,
+      "RMSE": 2.4341146877215403,
+      "R2": 0.9153377055945986
+    }
+  ],
+  "tmin": {
+    "nom_modele": "GradientBoosting",
+    "metriques_test": {
+      "MAE": 1.2004853753442783,
+      "RMSE": 1.5587240854340092,
+      "R2": 0.9433796680323663
+    },
+    "metriques_train": {
+      "MAE": 1.041691286161423,
+      "RMSE": 1.3407955547713477,
+      "R2": 0.9562976566535695
+    },
+    "intervalle_confiance": {
+      "niveau": 0.9,
+      "q_bas": -1.9867934997442465,
+      "q_haut": 2.8785592589400912,
+      "std": 1.500147128360094,
+      "mae": 1.2004853753442783,
+      "methode": "quantiles résiduels (jeu de test)"
+    }
+  },
+  "comparaison_tmin": [
+    {
+      "modèle": "RandomForest",
+      "MAE": 1.214405104581492,
+      "RMSE": 1.5654422672839823,
+      "R2": 0.9428905430728307
+    },
+    {
+      "modèle": "GradientBoosting",
+      "MAE": 1.2004853753442783,
+      "RMSE": 1.5587240854340092,
+      "R2": 0.9433796680323663
+    },
+    {
+      "modèle": "XGBoost",
+      "MAE": 1.2144919292894127,
+      "RMSE": 1.5607692769678552,
+      "R2": 0.9432309882313747
+    }
+  ],
+  "rhum": {
+    "nom_modele": "RandomForest",
+    "metriques_test": {
+      "MAE": 6.421483114545273,
+      "RMSE": 8.384971148494808,
+      "R2": 0.7176583374817346
+    },
+    "metriques_train": {
+      "MAE": 2.7920399106246925,
+      "RMSE": 3.7605631527831105,
+      "R2": 0.9352317649437805
+    },
+    "intervalle_confiance": {
+      "niveau": 0.9,
+      "q_bas": -12.598844020562758,
+      "q_haut": 14.64252247023811,
+      "std": 8.367894331454565,
+      "mae": 6.421483114545274,
+      "methode": "quantiles résiduels (jeu de test)"
+    }
+  },
+  "comparaison_rhum": [
+    {
+      "modèle": "RandomForest",
+      "MAE": 6.421483114545273,
+      "RMSE": 8.384971148494808,
+      "R2": 0.7176583374817346
+    },
+    {
+      "modèle": "GradientBoosting",
+      "MAE": 6.560588006593446,
+      "RMSE": 8.427895478600663,
+      "R2": 0.7147602124607142
+    },
+    {
+      "modèle": "XGBoost",
+      "MAE": 6.621844291687012,
+      "RMSE": 8.473643560645627,
+      "R2": 0.7116551399230957
+    }
+  ],
+  "wspd": {
+    "nom_modele": "GradientBoosting",
+    "metriques_test": {
+      "MAE": 3.9723926694803495,
+      "RMSE": 5.248599383566957,
+      "R2": 0.09956853786031983
+    },
+    "metriques_train": {
+      "MAE": 2.9661742863680667,
+      "RMSE": 3.86349552721305,
+      "R2": 0.4255902130022722
+    },
+    "intervalle_confiance": {
+      "niveau": 0.9,
+      "q_bas": -5.22348019694215,
+      "q_haut": 10.201827504798137,
+      "std": 4.874235473956679,
+      "mae": 3.9723926694803495,
+      "methode": "quantiles résiduels (jeu de test)"
+    }
+  },
+  "comparaison_wspd": [
+    {
+      "modèle": "RandomForest",
+      "MAE": 3.984842364276705,
+      "RMSE": 5.2779656764766365,
+      "R2": 0.0894643917788166
+    },
+    {
+      "modèle": "GradientBoosting",
+      "MAE": 3.9723926694803495,
+      "RMSE": 5.248599383566957,
+      "R2": 0.09956853786031983
+    },
+    {
+      "modèle": "XGBoost",
+      "MAE": 3.982971112238218,
+      "RMSE": 5.249461612912326,
+      "R2": 0.09927267142268514
+    }
+  ],
+  "pres": {
+    "nom_modele": "GradientBoosting",
+    "metriques_test": {
+      "MAE": 1.9908272073073283,
+      "RMSE": 2.675705426802547,
+      "R2": 0.7196046749856692
+    },
+    "metriques_train": {
+      "MAE": 1.8673866526590073,
+      "RMSE": 2.476829976090258,
+      "R2": 0.8038476112821958
+    },
+    "intervalle_confiance": {
+      "niveau": 0.9,
+      "q_bas": -4.27338383012613,
+      "q_haut": 4.13148869693899,
+      "std": 2.67466316770638,
+      "mae": 1.9908272073073283,
+      "methode": "quantiles résiduels (jeu de test)"
+    }
+  },
+  "comparaison_pres": [
+    {
+      "modèle": "RandomForest",
+      "MAE": 2.0239403823545357,
+      "RMSE": 2.6954960326336397,
+      "R2": 0.7154414996643532
+    },
+    {
+      "modèle": "GradientBoosting",
+      "MAE": 1.9908272073073283,
+      "RMSE": 2.675705426802547,
+      "R2": 0.7196046749856692
+    },
+    {
+      "modèle": "XGBoost",
+      "MAE": 2.013181720890413,
+      "RMSE": 2.691468102232677,
+      "R2": 0.7162913064828056
+    }
+  ],
+  "rain": {
+    "nom_modele": "RandomForest",
+    "metriques_test": {
+      "accuracy": 0.821917808219178,
+      "precision": 0.34285714285714286,
+      "recall": 0.2222222222222222,
+      "f1": 0.2696629213483146,
+      "auc": 0.7084821960223889
+    }
+  },
+  "comparaison_rain": [
+    {
+      "modèle": "RandomForest",
+      "accuracy": 0.821917808219178,
+      "precision": 0.34285714285714286,
+      "recall": 0.2222222222222222,
+      "f1": 0.2696629213483146,
+      "auc": 0.7084821960223889
+    },
+    {
+      "modèle": "GradientBoosting",
+      "accuracy": 0.8534246575342466,
+      "precision": 0.6666666666666666,
+      "recall": 0.018518518518518517,
+      "f1": 0.036036036036036036,
+      "auc": 0.714421817315708
+    },
+    {
+      "modèle": "XGBoost",
+      "accuracy": 0.8315068493150685,
+      "precision": 0.3584905660377358,
+      "recall": 0.17592592592592593,
+      "f1": 0.2360248447204969,
+      "auc": 0.7207187090627605
+    }
+  ]
+}

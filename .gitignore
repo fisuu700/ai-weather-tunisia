@@ -1,0 +1,40 @@
+# Fichiers et dossiers à exclure du dépôt HF Space
+
+# Cache Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Environnements virtuels
+.env
+.venv
+env/
+venv/
+
+# IDE / Éditeurs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Données temporaires et tests GPS (non indispensables)
+data/open_meteo_36.54*
+data/open_meteo_36.57*
+data/open_meteo_36.58*
+data/test_preds_GPS*
+
+# Modèles GPS (coordonnées brutes, non nécessaires au démarrage)
+models/*GPS*
+
+# Clés API (ne jamais pousser !)
+*.env
+.env.*
+secrets.toml

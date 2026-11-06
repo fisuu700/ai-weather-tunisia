@@ -44,7 +44,7 @@ from src import tounsi_ai                       # noqa: E402
 from src import train as train_module          # noqa: E402
 from src import units as U                     # noqa: E402
 from src import weather_api                     # noqa: E402
-from src.data_loader import VILLES             # noqa: E402
+from src.data_loader import VILLES, obtenir_info_geographique, REGIONS_TUNISIE  # noqa: E402
 
 # --------------------------------------------------------------------------
 # Configuration de la page
@@ -250,18 +250,21 @@ if mode_localisation == "Gouvernorat":
         "Gouvernorat (24 en Tunisie)",
         liste_villes,
         index=idx_defaut,
-        format_func=lambda v: f"{v} {'(Modèle prêt ✅)' if predict_module.modeles_complets(v) else '(À entraîner ⏳)'}",
+        format_func=lambda v: f"{v} ({obtenir_info_geographique(v)['region']}) {'✅' if predict_module.modeles_complets(v) else '⏳'}",
     )
     lat, lon = VILLES[ville]
+    info_geo = obtenir_info_geographique(ville)
 elif mode_localisation == "Coordonnées GPS":
     st.sidebar.caption("Ex. Tunis : 36.81 / 10.18 — Sousse : 35.83 / 10.64 — Sfax : 34.74 / 10.76")
     lat = st.sidebar.number_input("Latitude", -90.0, 90.0, 36.8065, step=0.0001, format="%.4f")
     lon = st.sidebar.number_input("Longitude", -180.0, 180.0, 10.1815, step=0.0001, format="%.4f")
     ville = f"GPS_{lat:.2f}_{lon:.2f}"
+    info_geo = obtenir_info_geographique(ville)
 else:
     lat = st.session_state.get("carte_lat", VILLES["Tunis"][0])
     lon = st.session_state.get("carte_lon", VILLES["Tunis"][1])
     ville = f"GPS_{lat:.2f}_{lon:.2f}"
+    info_geo = obtenir_info_geographique(ville)
     st.sidebar.caption("Cliquez un point sur la carte (zone principale) pour charger ses prévisions.")
 
 st.sidebar.markdown("### 📏 Unités")
@@ -322,13 +325,16 @@ st.markdown(f"""
     <p style="font-size: 1.05rem; opacity: 0.92; margin-bottom: 10px;">
         Intelligence météorologique par Machine Learning, données Open-Meteo & Assistant IA en <b>Dialecte Tunisien (Derja 🇹🇳)</b>.
     </p>
-    <div>
-        <span class="weather-badge badge-active">📍 {ville} ({lat:.2f}°N, {lon:.2f}°E)</span>
-        <span class="weather-badge {'badge-active' if modeles_ok else 'badge-warning'}">
-            {'✅ 6 Modèles ML Disponibles' if modeles_ok else '⏳ Modèles ML à entraîner (Live actif)'}
+    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+        <span class="weather-badge badge-active">📍 {ville} ({info_geo.get('nom_ar', '')}) · {lat:.2f}°N, {lon:.2f}°E</span>
+        <span class="weather-badge badge-info">🧭 {info_geo.get('region')} ({info_geo.get('zone')})</span>
+        <span class="weather-badge badge-info">🏞️ {info_geo.get('milieu')}</span>
+        <span class="weather-badge {'badge-active' if info_geo.get('facade_maritime') else 'badge-warning'}">
+            {'🌊 Façade Maritime' if info_geo.get('facade_maritime') else '🏞️ Région Intérieure'}
         </span>
-        <span class="weather-badge badge-info">🇹🇳 Chatbot Tounsi 100% Connecté</span>
-        <span class="weather-badge badge-info">🛰️ 24 Gouvernorats</span>
+        <span class="weather-badge {'badge-active' if modeles_ok else 'badge-warning'}">
+            {'✅ 6 Modèles ML Prêts' if modeles_ok else '⏳ Modèles ML à entraîner (Live actif)'}
+        </span>
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -341,10 +347,23 @@ if mode_localisation == "Carte interactive":
         couleur = "green" if pret else "blue"
         icone = "ok-sign" if pret else "info-sign"
         statut = "Modèle prêt ✅" if pret else "À entraîner ⏳"
+        geo_item = obtenir_info_geographique(nom)
+        popup_html = f"""
+        <div style='font-family: sans-serif; min-width: 200px; font-size: 13px;'>
+            <b style='font-size: 14px; color: #0284c7;'>📍 {nom} ({geo_item.get('nom_ar', '')})</b><br>
+            <b>Région :</b> {geo_item.get('region')} ({geo_item.get('zone')})<br>
+            <b>Milieu :</b> {geo_item.get('milieu')}<br>
+            <b>Altitude :</b> ~{geo_item.get('altitude_m')} m<br>
+            <b>Côte :</b> {'🌊 Littoral' if geo_item.get('facade_maritime') else '🏞️ Intérieure'}<br>
+            <b>Voisins :</b> {', '.join(geo_item.get('voisins', []))}<br>
+            <b>Statut ML :</b> {statut}<br>
+            <p style='font-size: 11px; color: #475569; margin: 6px 0 0 0;'>{geo_item.get('description_fr')}</p>
+        </div>
+        """
         folium.Marker(
             [la, lo],
-            tooltip=f"{nom} ({statut})",
-            popup=f"<b>{nom}</b><br>{statut}",
+            tooltip=f"{nom} ({geo_item.get('region')}) — {statut}",
+            popup=folium.Popup(popup_html, max_width=280),
             icon=folium.Icon(color=couleur, icon=icone),
         ).add_to(carte)
     if st.session_state.get("carte_lat") is not None:
@@ -354,7 +373,7 @@ if mode_localisation == "Carte interactive":
             icon=folium.Icon(color="red", icon="star"),
         ).add_to(carte)
 
-    etat_carte = st_folium(carte, height=400, use_container_width=True, key="carte_selection")
+    etat_carte = st_folium(carte, height=420, use_container_width=True, key="carte_selection")
     if etat_carte and etat_carte.get("last_clicked"):
         lat = float(etat_carte["last_clicked"]["lat"])
         lon = float(etat_carte["last_clicked"]["lng"])
@@ -465,43 +484,39 @@ with onglet_prev:
         lc[5].metric("Indice UV", _texte(live.get("uv"), "{:.1f}"))
         st.caption(f"Relevé à : {live.get('horodatage', 'n/c')} (heure locale du point).")
 
+    # Fiche géographique & identité territoriale
+    with st.expander(f"🗺️ Situation géographique & profil territorial : {ville} ({info_geo.get('nom_ar', '')})", expanded=False):
+        gcol1, gcol2 = st.columns([1, 2])
+        with gcol1:
+            st.markdown(f"""
+            - **Région :** `{info_geo.get('region')}` ({info_geo.get('zone')})
+            - **Milieu / Relief :** {info_geo.get('milieu')}
+            - **Altitude :** ~`{info_geo.get('altitude_m')} m`
+            - **Façade maritime :** `{'🌊 Oui (Littoral)' if info_geo.get('facade_maritime') else '🏞️ Non (Gouvernorat intérieur)'}`
+            - **Voisins limitrophes :** {', '.join(info_geo.get('voisins', [])) if info_geo.get('voisins') else 'Point GPS'}
+            """)
+        with gcol2:
+            st.markdown(f"""
+            **Situation géographique :**  
+            {info_geo.get('description_fr')}
+
+            **Climat local & influence du relief :**  
+            *{info_geo.get('climat')}*
+            """)
+
     st.markdown("---")
 
-    col_gauche, col_droite = st.columns([1, 2])
-    with col_gauche:
-        st.subheader("☔ Probabilité de pluie demain")
-        proba_pct = premier["proba_pluie"] * 100
-        fig_jauge = go.Figure(go.Indicator(
-            mode="gauge+number",
-            value=proba_pct,
-            number={"suffix": " %", "font": {"size": 34}},
-            title={"text": "Risque de pluie", "font": {"size": 14}},
-            gauge={
-                "axis": {"range": [0, 100]},
-                "bar": {"color": _couleur_pluie(proba_pct), "thickness": 0.35},
-                "steps": [
-                    {"range": [0, 25], "color": "#D4EDDA"},
-                    {"range": [25, 50], "color": "#FFF3CD"},
-                    {"range": [50, 75], "color": "#F8D7DA"},
-                    {"range": [75, 100], "color": "#F5C6CB"},
-                ],
-                "threshold": {"line": {"color": "black", "width": 3}, "thickness": 0.9, "value": 50},
-            },
-        ))
-        fig_jauge.update_layout(height=300, margin=dict(l=30, r=30, t=50, b=10))
-        st.plotly_chart(fig_jauge, use_container_width=True)
-        st.caption(
-            f"Seuil « jour pluvieux » : prcp > {resultat['seuil_pluie_mm']} mm — "
-            f"F1 (test) = {metriques['rain'].get('f1', float('nan')):.2f} · "
-            f"AUC = {metriques['rain'].get('auc', float('nan')):.2f}"
+    if not (resultat and premier):
+        st.info(
+            f"💡 **Modèles ML non encore entraînés pour {ville} :** "
+            f"Les prévisions multi-jours avancées, la jauge de risque de pluie et l'intervalle de confiance "
+            f"s'activeront dès l'entraînement terminé (cliquez sur **🚀 Entraîner / Ré-entraîner** dans la barre latérale).\n\n"
+            f"👉 Vous pouvez dès maintenant explorer les **conditions réelles ci-dessus** et échanger avec l'**Assistant IA Tounsi 🇹🇳** dans le 2ème onglet !"
         )
-
-    with col_droite:
-        st.subheader(f"⏱️ Heure par heure — {premier['date']}")
-        horaire_demain = weather_api.heure_pleine_demain(horaire, premier["date"])
-        if horaire_demain.empty:
-            st.info("Prévision horaire indisponible (API Open-Meteo injoignable).")
-        else:
+        date_demain = str(date.today() + timedelta(days=1))
+        horaire_demain = weather_api.heure_pleine_demain(horaire, date_demain)
+        if not horaire_demain.empty:
+            st.subheader(f"⏱️ Prévision heure par heure (Open-Meteo) — {date_demain}")
             libelle_t = U.libelle_temperature(systeme)
             fig_heure = go.Figure()
             fig_heure.add_trace(go.Bar(
@@ -524,69 +539,127 @@ with onglet_prev:
             )
             fig_heure.update_xaxes(tickformat="%H:%M")
             st.plotly_chart(fig_heure, use_container_width=True)
-
-    st.markdown("---")
-    st.subheader(f"📋 Prévisions détaillées ({horizon} jour(s))")
-
-    lignes = []
-    for p in previsions:
-        api_jour = _api_du_jour(p["date"])
-        ic = (f"{U.fmt_temperature(p['ic_bas'], systeme)} → {U.fmt_temperature(p['ic_haut'], systeme)}"
-              if p["ic_bas"] is not None else "n/c")
-        lignes.append({
-            "Date": p["date"],
-            "Horizon": f"J+{p['horizon']}",
-            f"Tmax ({U.libelle_temperature(systeme)})": U.fmt_temperature(p["tmax"], systeme),
-            "IC 90 %": ic,
-            f"Tmin ({U.libelle_temperature(systeme)})": U.fmt_temperature(p["tmin"], systeme),
-            "Pluie": f"{p['proba_pluie'] * 100:.0f} %",
-            f"Vent ({U.libelle_vitesse(systeme)})": U.fmt_vitesse(p["wspd"], systeme),
-            "Humidité": f"{p['rhum']:.0f} %",
-            "Pression (hPa)": f"{p['pres']:.0f}",
-            "UV max": _texte(api_jour["uv"] if api_jour is not None else None, "{:.0f}"),
-            "Direction vent": (api_jour["direction"] if api_jour is not None else "n/c"),
-        })
-    st.dataframe(pd.DataFrame(lignes), use_container_width=True, hide_index=True)
-    st.caption(
-        "Les colonnes **UV max** et **Direction vent** proviennent de la prévision brute "
-        "Open-Meteo (variables non modélisées) ; le reste est produit par les modèles ML."
-    )
-
-    if horizon > 1:
-        st.subheader("📈 Évolution des températures prévues")
-        dates_trace = [pd.to_datetime(p["date"]) for p in previsions]
-        tmax_trace = U.serie_temperature([p["tmax"] for p in previsions], systeme)
-        tmin_trace = U.serie_temperature([p["tmin"] for p in previsions], systeme)
-        libelle_t = U.libelle_temperature(systeme)
-
-        fig_multi = go.Figure()
-        if all(p["ic_bas"] is not None for p in previsions):
-            haut = U.serie_temperature([p["ic_haut"] for p in previsions], systeme)
-            bas = U.serie_temperature([p["ic_bas"] for p in previsions], systeme)
-            fig_multi.add_trace(go.Scatter(
-                x=dates_trace, y=haut, mode="lines", line=dict(width=0),
-                showlegend=False, hoverinfo="skip",
+    else:
+        col_gauche, col_droite = st.columns([1, 2])
+        with col_gauche:
+            st.subheader("☔ Probabilité de pluie demain")
+            proba_pct = premier["proba_pluie"] * 100
+            fig_jauge = go.Figure(go.Indicator(
+                mode="gauge+number",
+                value=proba_pct,
+                number={"suffix": " %", "font": {"size": 34}},
+                title={"text": "Risque de pluie", "font": {"size": 14}},
+                gauge={
+                    "axis": {"range": [0, 100]},
+                    "bar": {"color": _couleur_pluie(proba_pct), "thickness": 0.35},
+                    "steps": [
+                        {"range": [0, 25], "color": "#D4EDDA"},
+                        {"range": [25, 50], "color": "#FFF3CD"},
+                        {"range": [50, 75], "color": "#F8D7DA"},
+                        {"range": [75, 100], "color": "#F5C6CB"},
+                    ],
+                    "threshold": {"line": {"color": "black", "width": 3}, "thickness": 0.9, "value": 50},
+                },
             ))
-            fig_multi.add_trace(go.Scatter(
-                x=dates_trace, y=bas, mode="lines", line=dict(width=0),
-                fill="tonexty", fillcolor="rgba(255,165,0,0.20)",
-                name="IC 90 %", hoverinfo="skip",
-            ))
-        fig_multi.add_trace(go.Scatter(
-            x=dates_trace, y=tmax_trace, mode="lines+markers", name=f"Tmax ({libelle_t})",
-            line=dict(color="#EF553B", width=2.4),
-        ))
-        fig_multi.add_trace(go.Scatter(
-            x=dates_trace, y=tmin_trace, mode="lines+markers", name=f"Tmin ({libelle_t})",
-            line=dict(color="#636EFA", width=2.4, dash="dot"),
-        ))
-        fig_multi.update_layout(
-            height=380, margin=dict(l=20, r=20, t=30, b=20),
-            yaxis_title=f"Température ({libelle_t})", xaxis_title="Date",
-            legend=dict(orientation="h", yanchor="bottom", y=1.02),
-            hovermode="x unified",
+            fig_jauge.update_layout(height=300, margin=dict(l=30, r=30, t=50, b=10))
+            st.plotly_chart(fig_jauge, use_container_width=True)
+            st.caption(
+                f"Seuil « jour pluvieux » : prcp > {resultat['seuil_pluie_mm']} mm — "
+                f"F1 (test) = {metriques['rain'].get('f1', float('nan')):.2f} · "
+                f"AUC = {metriques['rain'].get('auc', float('nan')):.2f}"
+            )
+
+        with col_droite:
+            st.subheader(f"⏱️ Heure par heure — {premier['date']}")
+            horaire_demain = weather_api.heure_pleine_demain(horaire, premier["date"])
+            if horaire_demain.empty:
+                st.info("Prévision horaire indisponible (API Open-Meteo injoignable).")
+            else:
+                libelle_t = U.libelle_temperature(systeme)
+                fig_heure = go.Figure()
+                fig_heure.add_trace(go.Bar(
+                    x=horaire_demain.index, y=horaire_demain["prcp_prob"],
+                    name="Probabilité de pluie (%)", marker_color="#636EFA", opacity=0.35,
+                    yaxis="y2",
+                ))
+                fig_heure.add_trace(go.Scatter(
+                    x=horaire_demain.index,
+                    y=U.serie_temperature(horaire_demain["temp"].tolist(), systeme),
+                    name=f"Température ({libelle_t})", mode="lines+markers",
+                    line=dict(color="#EF553B", width=2),
+                ))
+                fig_heure.update_layout(
+                    height=340, margin=dict(l=20, r=20, t=20, b=20),
+                    yaxis=dict(title=f"Température ({libelle_t})"),
+                    yaxis2=dict(title="Pluie (%)", overlaying="y", side="right", range=[0, 100]),
+                    legend=dict(orientation="h", yanchor="bottom", y=1.02),
+                    hovermode="x unified",
+                )
+                fig_heure.update_xaxes(tickformat="%H:%M")
+                st.plotly_chart(fig_heure, use_container_width=True)
+
+        st.markdown("---")
+        st.subheader(f"📋 Prévisions détaillées ({horizon} jour(s))")
+
+        lignes = []
+        for p in previsions:
+            api_jour = _api_du_jour(p["date"])
+            ic = (f"{U.fmt_temperature(p['ic_bas'], systeme)} → {U.fmt_temperature(p['ic_haut'], systeme)}"
+                  if p["ic_bas"] is not None else "n/c")
+            lignes.append({
+                "Date": p["date"],
+                "Horizon": f"J+{p['horizon']}",
+                f"Tmax ({U.libelle_temperature(systeme)})": U.fmt_temperature(p["tmax"], systeme),
+                "IC 90 %": ic,
+                f"Tmin ({U.libelle_temperature(systeme)})": U.fmt_temperature(p["tmin"], systeme),
+                "Pluie": f"{p['proba_pluie'] * 100:.0f} %",
+                f"Vent ({U.libelle_vitesse(systeme)})": U.fmt_vitesse(p["wspd"], systeme),
+                "Humidité": f"{p['rhum']:.0f} %",
+                "Pression (hPa)": f"{p['pres']:.0f}",
+                "UV max": _texte(api_jour["uv"] if api_jour is not None else None, "{:.0f}"),
+                "Direction vent": (api_jour["direction"] if api_jour is not None else "n/c"),
+            })
+        st.dataframe(pd.DataFrame(lignes), use_container_width=True, hide_index=True)
+        st.caption(
+            "Les colonnes **UV max** et **Direction vent** proviennent de la prévision brute "
+            "Open-Meteo (variables non modélisées) ; le reste est produit par les modèles ML."
         )
-        st.plotly_chart(fig_multi, use_container_width=True)
+
+        if horizon > 1:
+            st.subheader("📈 Évolution des températures prévues")
+            dates_trace = [pd.to_datetime(p["date"]) for p in previsions]
+            tmax_trace = U.serie_temperature([p["tmax"] for p in previsions], systeme)
+            tmin_trace = U.serie_temperature([p["tmin"] for p in previsions], systeme)
+            libelle_t = U.libelle_temperature(systeme)
+
+            fig_multi = go.Figure()
+            if all(p["ic_bas"] is not None for p in previsions):
+                haut = U.serie_temperature([p["ic_haut"] for p in previsions], systeme)
+                bas = U.serie_temperature([p["ic_bas"] for p in previsions], systeme)
+                fig_multi.add_trace(go.Scatter(
+                    x=dates_trace, y=haut, mode="lines", line=dict(width=0),
+                    showlegend=False, hoverinfo="skip",
+                ))
+                fig_multi.add_trace(go.Scatter(
+                    x=dates_trace, y=bas, mode="lines", line=dict(width=0),
+                    fill="tonexty", fillcolor="rgba(255,165,0,0.20)",
+                    name="IC 90 %", hoverinfo="skip",
+                ))
+            fig_multi.add_trace(go.Scatter(
+                x=dates_trace, y=tmax_trace, mode="lines+markers", name=f"Tmax ({libelle_t})",
+                line=dict(color="#EF553B", width=2.4),
+            ))
+            fig_multi.add_trace(go.Scatter(
+                x=dates_trace, y=tmin_trace, mode="lines+markers", name=f"Tmin ({libelle_t})",
+                line=dict(color="#636EFA", width=2.4, dash="dot"),
+            ))
+            fig_multi.update_layout(
+                height=380, margin=dict(l=20, r=20, t=30, b=20),
+                yaxis_title=f"Température ({libelle_t})", xaxis_title="Date",
+                legend=dict(orientation="h", yanchor="bottom", y=1.02),
+                hovermode="x unified",
+            )
+            st.plotly_chart(fig_multi, use_container_width=True)
 
 # ==========================================================================
 # Onglet 2 — Chatbot IA Tounsi (100% Dialecte Tunisien / Derja)
@@ -617,11 +690,11 @@ with onglet_chat:
     st.markdown("##### 💡 As'el b clique wa7da (Suggestions rapides) :")
     c1, c2, c3 = st.columns(3)
     quick_list = [
+        f"Win jéya {ville} géographiquement ? 🗺️",
         f"Chnowa l'jaw lyoum f {ville} ?",
         f"Fama mtar ghodwa f {ville} ?",
         f"Chnowa nelbes ghodwa sbah ?",
         f"El ba7r behi lil 3wema ?",
-        f"Fama rya7 9wiya wela dhabeb ?",
         f"Ta9s behi lil 5rouj w 9ahwa ?",
     ]
 
@@ -638,8 +711,8 @@ with onglet_chat:
                 "role": "assistant",
                 "content": (
                     f"**3aslema bik ya sidi !** Mar7ba bik 🇹🇳.\n\n"
-                    f"Ena el assistant météo mte3ek b tounsi. Taw a7na f **{ville}**.\n"
-                    f"As'elni 3la ay 7aja t7ebha : *el ta9s, el mtar, chnowa telbes, el ba7r wel 3wema, wela ay gouvernorat a5er f tounes !*"
+                    f"Ena el assistant météo mte3ek b tounsi. Taw a7na f **{ville}** ({info_geo.get('region')}).\n"
+                    f"As'elni 3la ay 7aja t7ebha : *win jéya {ville} géographiquement, el ta9s, el mtar, chnowa telbes, el ba7r wel 3wema, wela ay gouvernorat a5er f tounes !*"
                 ),
             }
         ]
@@ -663,7 +736,7 @@ with onglet_chat:
             st.markdown(prompt_user)
 
         with st.chat_message("assistant", avatar="🇹🇳"):
-            with st.spinner("9a3ed nchouflek fel météo..."):
+            with st.spinner("L'assistant 9a3ed yjeweb fik... 🇹🇳"):
                 reponse_ai = tounsi_ai.generer_reponse_ai_tounsi(
                     prompt_user,
                     historique=st.session_state["messages_tounsi"][:-1],

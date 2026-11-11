@@ -987,4 +987,8 @@ Réponse finale en 100% Derja tunisienne naturelle :"""
                     pass
                 return reponse_propre
     except Exception as e:
-        return f"⚠️ Erreur de connexion avec Ollama ({ollama_url}) : {e}"
+        # En cas d'erreur de connexion ou de timeout avec Ollama/ngrok, basculement automatique sur le moteur local Derja
+        try:
+            return repondre_en_tunisien_moteur_local(question, contexte)
+        except Exception:
+            return f"⚠️ Erreur de connexion avec Ollama ({ollama_url}) : {e}. Veille à bien lancer ngrok et Ollama sur ton PC."

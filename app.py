@@ -572,8 +572,6 @@ if bouton_train:
         except Exception as exc:  # noqa: BLE001 — affichage d'erreur utilisateur
             st.sidebar.error(f"❌ Échec de l'entraînement : {exc}")
 
-st.sidebar.markdown("### 🤖 Assistant IA Tounsi")
-st.sidebar.success("🟢 Connecté à l'Assistant Tounsi (DeepSeek-R1)")
 url_ollama_custom = "http://localhost:11434"
 modele_ollama_nom = "deepseek-r1:7b"
 mode_ia = "Ollama (DeepSeek-R1 7B)"

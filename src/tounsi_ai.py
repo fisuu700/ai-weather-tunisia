@@ -954,7 +954,7 @@ Règles strictes :
             reponse_brute = data.get("response", "")
             reponse_propre = re.sub(r'<think>.*?</think>', '', reponse_brute, flags=re.DOTALL).strip()
 
-            if not reponse_propre:
+            if not reponse_propre or reponse_propre.lower() == "none":
                 return repondre_en_tunisien_moteur_local(question, contexte)
 
             # --- ROBOT INTERMÉDIAIRE : POST-TRAITEMENT ET CONTRÔLE DERJA ---
@@ -984,7 +984,7 @@ Réponse finale en 100% Derja tunisienne naturelle :"""
                         data_corr = resp_corr.json()
                         reponse_corr_brute = data_corr.get("response", "")
                         reponse_finale = re.sub(r'<think>.*?</think>', '', reponse_corr_brute, flags=re.DOTALL).strip()
-                        if reponse_finale:
+                        if reponse_finale and reponse_finale.lower() != "none":
                             return reponse_finale
                 except Exception:
                     pass

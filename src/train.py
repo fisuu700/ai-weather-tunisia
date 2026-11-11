@@ -36,6 +36,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import time
 from datetime import date, timedelta
 
 import joblib
@@ -59,7 +60,7 @@ from sklearn.metrics import (
 )
 from xgboost import XGBClassifier, XGBRegressor
 
-from src.data_loader import VILLES, fetch_data, normaliser_ville
+from src.data_loader import VILLES, INFOS_GEOGRAPHIQUES, fetch_data, normaliser_ville
 from src.feature_engineering import construire_features, features_disponibles
 
 # --------------------------------------------------------------------------
@@ -96,29 +97,25 @@ NIVEAU_INTERVALLE = 0.90
 # --------------------------------------------------------------------------
 def preparer_donnees(
     df: pd.DataFrame,
+    est_global: bool = False,
+    features_globales: list[str] | None = None,
 ) -> tuple[pd.DataFrame, dict[str, pd.Series], pd.Series, list[str]]:
     """
     Construit la matrice de features et les cibles de régression + pluie.
-
-    Retour
-    ------
-    X       : matrice de features (index temporel conservé) ;
-    cibles  : dict {variable: série cible} pour tmax, tmin, rhum, wspd, pres ;
-    y_rain  : 1 si jour pluvieux (prcp > 1 mm), sinon 0 ;
-    features: liste des features effectivement utilisées.
     """
-    df = construire_features(df)
-    features = features_disponibles(df)
+    if not est_global:
+        df = construire_features(df)
+    features = features_globales if features_globales is not None else features_disponibles(df)
 
     colonnes_cibles = [
         c for c in CIBLES_REGRESSION
         if c in df.columns and not df[c].isna().all()
     ]
-    donnees = df[features + colonnes_cibles].dropna()
+    donnees = df[features + colonnes_cibles + ["prcp"]].dropna(subset=features + colonnes_cibles)
     X = donnees[features]
 
     cibles = {c: donnees[c] for c in colonnes_cibles}
-    y_rain = (df.loc[donnees.index, "prcp"] > SEUIL_PLUIE_MM).astype(int)
+    y_rain = (donnees["prcp"] > SEUIL_PLUIE_MM).astype(int)
     return X, cibles, y_rain, features
 
 
@@ -196,39 +193,21 @@ def evaluer_classification(
 # Catalogues de modèles
 # --------------------------------------------------------------------------
 def modeles_regression() -> dict:
-    """Trois régresseurs comparés pour la prédiction de tmax."""
+    """Régresseur rapide (RandomForest unique) pour vitesse maximale."""
     return {
         "RandomForest": RandomForestRegressor(
-            n_estimators=400, min_samples_leaf=2,
+            n_estimators=100, min_samples_leaf=4,
             random_state=RANDOM_STATE, n_jobs=-1,
-        ),
-        "GradientBoosting": GradientBoostingRegressor(
-            n_estimators=300, learning_rate=0.05, max_depth=3,
-            random_state=RANDOM_STATE,
-        ),
-        "XGBoost": XGBRegressor(
-            n_estimators=400, learning_rate=0.05, max_depth=4,
-            subsample=0.9, colsample_bytree=0.9,
-            random_state=RANDOM_STATE, n_jobs=-1, verbosity=0,
         ),
     }
 
 
 def modeles_classification() -> dict:
-    """Classifieurs comparés pour le risque de pluie."""
+    """Classifieur rapide (RandomForest unique) pour risque de pluie."""
     return {
         "RandomForest": RandomForestClassifier(
-            n_estimators=400, min_samples_leaf=3, class_weight="balanced",
+            n_estimators=100, min_samples_leaf=5, class_weight="balanced",
             random_state=RANDOM_STATE, n_jobs=-1,
-        ),
-        "GradientBoosting": GradientBoostingClassifier(
-            n_estimators=200, learning_rate=0.05, max_depth=3,
-            random_state=RANDOM_STATE,
-        ),
-        "XGBoost": XGBClassifier(
-            n_estimators=300, learning_rate=0.05, max_depth=4,
-            subsample=0.9, colsample_bytree=0.9, scale_pos_weight=3,
-            random_state=RANDOM_STATE, n_jobs=-1, verbosity=0,
         ),
     }
 
@@ -306,7 +285,9 @@ def entrainer_et_sauvegarder(
     os.makedirs(MODELES_DIR, exist_ok=True)
     os.makedirs(DATA_DIR, exist_ok=True)
 
-    X, cibles, y_rain, features = preparer_donnees(df)
+    est_global = (ville == "global")
+    # Pour le modèle global, s'assurer qu'on garde toutes les lignes valides sans filtrer à tort
+    X, cibles, y_rain, features = preparer_donnees(df, est_global=est_global)
     if verbose:
         print(f"Dataset {ville} : {len(X)} jours | features : {len(features)}")
         print(f"Période : {X.index.min().date()} -> {X.index.max().date()}")
@@ -452,6 +433,52 @@ def entrainer_pour_ville(
     return entrainer_et_sauvegarder(df, ville, lat, lon, annees_test=annees_test, verbose=verbose)
 
 
+def entrainer_global(
+    annees_test: int = ANNEES_TEST_DEFAUT,
+    debut: str = "2010-01-01",
+    fin: str | None = None,
+    use_cache: bool = True,
+    verbose: bool = True,
+) -> dict:
+    """Entraîne un modèle global unifié sur tous les gouvernorats de la Tunisie."""
+    fin = fin or (date.today() - timedelta(days=1)).isoformat()
+    dfs = []
+    for nom_gov, info in INFOS_GEOGRAPHIQUES.items():
+        lat = info["lat"]
+        lon = info["lon"]
+        if verbose:
+            print(f"Chargement des données pour {nom_gov} (lat={lat}, lon={lon})...")
+        try:
+            df_g = fetch_data(lat, lon, debut, fin, use_cache=use_cache)
+            df_g["lat"] = lat
+            df_g["lon"] = lon
+            df_g["altitude_m"] = info.get("altitude_m", 0)
+            df_g["facade_maritime"] = 1 if info.get("facade_maritime", False) else 0
+            df_g["gouvernorat"] = nom_gov
+            dfs.append(df_g)
+            time.sleep(1.0)
+        except Exception as e:
+            print(f"Erreur pour {nom_gov}: {e}")
+
+    if not dfs:
+        raise ValueError("Aucune donnée chargée pour le modèle global.")
+
+    df_global = pd.concat(dfs, axis=0)
+    # Calculer les features séparément par gouvernorat pour éviter les interférences de séries temporelles entre villes
+    dfs_feats = []
+    for gov, df_g in df_global.groupby("gouvernorat"):
+        dfs_feats.append(construire_features(df_g))
+    df_global = pd.concat(dfs_feats, axis=0)
+
+    # Supprimer les lignes avec des NaN dans les colonnes cibles ou features essentielles avant de passer à l'entraînement
+    df_global = df_global.dropna(subset=list(CIBLES_REGRESSION) + ["prcp"])
+
+    if verbose:
+        print(f"\nDataset Global combiné (sans NaN cibles) : {len(df_global)} lignes au total.")
+
+    return entrainer_et_sauvegarder(df_global, "global", lat=36.8065, lon=10.1815, annees_test=annees_test, verbose=verbose)
+
+
 # --------------------------------------------------------------------------
 # CLI
 # --------------------------------------------------------------------------
@@ -464,17 +491,27 @@ if __name__ == "__main__":
     parser.add_argument("--fin", default=None, help="Fin de la période (défaut : hier)")
     parser.add_argument("--annees-test", type=int, default=ANNEES_TEST_DEFAUT,
                         help="Nombre d'années réservées au jeu de test")
+    parser.add_argument("--global-model", action="store_true", help="Entraîne un modèle global unifié sur tous les gouvernorats")
     parser.add_argument("--no-cache", action="store_true", help="Ignore le cache CSV local")
     args = parser.parse_args()
 
-    nom_ville = args.ville if args.lat is None else f"GPS_{args.lat:.2f}_{args.lon:.2f}"
-    print(f"=== Entraînement — {nom_ville} ===\n")
-    entrainer_pour_ville(
-        nom_ville,
-        annees_test=args.annees_test,
-        debut=args.debut,
-        fin=args.fin,
-        use_cache=not args.no_cache,
-        lat=args.lat,
-        lon=args.lon,
-    )
+    if args.global_model:
+        print("=== Entraînement du Modèle Global Tunisie (24 gouvernorats) ===\n")
+        entrainer_global(
+            annees_test=args.annees_test,
+            debut=args.debut,
+            fin=args.fin,
+            use_cache=not args.no_cache,
+        )
+    else:
+        nom_ville = args.ville if args.lat is None else f"GPS_{args.lat:.2f}_{args.lon:.2f}"
+        print(f"=== Entraînement — {nom_ville} ===\n")
+        entrainer_pour_ville(
+            nom_ville,
+            annees_test=args.annees_test,
+            debut=args.debut,
+            fin=args.fin,
+            use_cache=not args.no_cache,
+            lat=args.lat,
+            lon=args.lon,
+        )

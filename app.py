@@ -72,7 +72,7 @@ html, body, [class*="css"] {
     border: 1px solid rgba(56, 189, 248, 0.28);
     border-radius: 20px;
     padding: 24px 28px;
-    margin-bottom: 24px;
+    margin-bottom: 22px;
     backdrop-filter: blur(12px);
     box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.12);
 }
@@ -119,6 +119,100 @@ html, body, [class*="css"] {
     border: 1px solid rgba(245, 158, 11, 0.35);
 }
 
+/* Carte Météo Temps Réel (Live Hero Card) */
+.live-hero-card {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, rgba(30, 58, 138, 0.16) 50%, rgba(99, 102, 241, 0.10) 100%);
+    border: 1px solid rgba(56, 189, 248, 0.32);
+    border-radius: 20px;
+    padding: 22px 26px;
+    margin-bottom: 22px;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 10px 28px -6px rgba(0, 0, 0, 0.12);
+}
+
+.live-hero-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.live-hero-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.live-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    color: #10b981;
+    border-radius: 9999px;
+    padding: 3px 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: inline-flex;
+}
+
+.live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #10b981;
+    display: inline-block;
+    animation: pulse-dot 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.75); }
+}
+
+.live-temp-display {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1;
+    background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+    margin-bottom: 4px;
+}
+
+.live-hero-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.live-stat-chip {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 6px 14px;
+    font-size: 0.88rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.live-stat-chip:hover {
+    background: rgba(56, 189, 248, 0.10);
+    border-color: rgba(56, 189, 248, 0.35);
+}
+
 /* Cartes Métriques (Streamlit metrics) */
 div[data-testid="stMetric"] {
     background: rgba(255, 255, 255, 0.04);
@@ -135,6 +229,70 @@ div[data-testid="stMetric"]:hover {
     box-shadow: 0 12px 28px -5px rgba(56, 189, 248, 0.18);
 }
 
+/* Multi-day forecast cards */
+.forecast-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+    margin: 14px 0 22px 0;
+}
+.forecast-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 16px;
+    padding: 14px 10px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.forecast-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(56, 189, 248, 0.5);
+    background: rgba(56, 189, 248, 0.08);
+    box-shadow: 0 10px 24px -6px rgba(0, 0, 0, 0.2);
+}
+.forecast-card.card-today {
+    border-color: rgba(14, 165, 233, 0.6);
+    background: linear-gradient(180deg, rgba(14, 165, 233, 0.14) 0%, rgba(30, 58, 138, 0.12) 100%);
+    box-shadow: 0 6px 20px -4px rgba(14, 165, 233, 0.2);
+}
+.forecast-date {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.forecast-icon {
+    font-size: 2.1rem;
+    margin: 6px 0;
+    line-height: 1;
+}
+.forecast-temps {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+.forecast-tmax {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #ef4444;
+}
+.forecast-tmin {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #60a5fa;
+}
+.forecast-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+
 /* Chat Welcome Card */
 .chat-welcome-card {
     background: linear-gradient(135deg, rgba(225, 29, 72, 0.09) 0%, rgba(244, 63, 94, 0.05) 50%, rgba(251, 146, 60, 0.05) 100%);
@@ -143,6 +301,15 @@ div[data-testid="stMetric"]:hover {
     padding: 22px 26px;
     margin-bottom: 22px;
     box-shadow: 0 8px 24px -6px rgba(225, 29, 72, 0.08);
+}
+
+.chat-cat-header {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #e11d48;
+    margin-bottom: 8px;
 }
 
 /* Onglets stylisés */
@@ -193,10 +360,12 @@ LIBELLES_CIBLES = {
     "rain": "🌧️ Risque de pluie",
 }
 MOIS_ORDRE = [climatology.MOIS_FR[m] for m in range(1, 13)]
+JOURS_FR = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"]
+MOIS_FR_COURT = ["", "Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"]
 
 
 # --------------------------------------------------------------------------
-# Fonctions utilitaires (cache + formatage)
+# Fonctions utilitaires (cache + formatage + styling)
 # --------------------------------------------------------------------------
 @st.cache_data(ttl=3600, show_spinner=False)
 def _charger_climatologie(lat: float, lon: float, debut: str) -> pd.DataFrame:
@@ -228,6 +397,98 @@ def _couleur_pluie(proba_pct: float) -> str:
     return "#1C9078"
 
 
+def _icone_meteo(wmo_code: int | None = None, proba_pluie: float | None = None, tmax: float | None = None) -> tuple[str, str]:
+    """Retourne (emoji, description) adaptée selon WMO code ou prévision ML."""
+    if wmo_code is not None:
+        table = {
+            0: ("☀️", "Ciel dégagé"),
+            1: ("🌤️", "Principalement dégagé"),
+            2: ("⛅", "Partiellement nuageux"),
+            3: ("☁️", "Couvert"),
+            45: ("🌫️", "Brouillard"),
+            48: ("🌫️", "Brouillard givrant"),
+            51: ("🌦️", "Bruine légère"),
+            53: ("🌦️", "Bruine modérée"),
+            55: ("🌧️", "Bruine dense"),
+            61: ("🌧️", "Pluie faible"),
+            63: ("🌧️", "Pluie modérée"),
+            65: ("🌧️", "Forte pluie"),
+            71: ("🌨️", "Neige faible"),
+            73: ("🌨️", "Neige modérée"),
+            75: ("❄️", "Forte neige"),
+            80: ("🌦️", "Averses faibles"),
+            81: ("🌧️", "Averses modérées"),
+            82: ("⛈️", "Averses violentes"),
+            95: ("⛈️", "Orage"),
+            96: ("⛈️", "Orage avec grêle"),
+            99: ("⛈️", "Orage violent"),
+        }
+        if wmo_code in table:
+            return table[wmo_code]
+
+    if proba_pluie is not None:
+        if proba_pluie >= 0.55:
+            return ("🌧️", "Pluie probable")
+        if proba_pluie >= 0.30:
+            return ("🌦️", "Risque d'averses")
+        if tmax is not None and tmax >= 34:
+            return ("☀️", "Très chaud & Ensoleillé")
+        if tmax is not None and tmax >= 24:
+            return ("🌤️", "Beau temps ensoleillé")
+        return ("⛅", "Variable / Éclaircies")
+
+    return ("🌤️", "Temps variable")
+
+
+def _badge_uv(uv: float | None) -> tuple[str, str, str]:
+    """Retourne (libellé, couleur_texte, couleur_fond) selon l'indice UV."""
+    if uv is None or (isinstance(uv, float) and np.isnan(uv)):
+        return ("n/c", "#94a3b8", "rgba(148, 163, 184, 0.15)")
+    if uv < 3:
+        return ("Faible", "#10b981", "rgba(16, 185, 129, 0.18)")
+    if uv < 6:
+        return ("Modéré", "#f59e0b", "rgba(245, 158, 11, 0.18)")
+    if uv < 8:
+        return ("Élevé", "#f97316", "rgba(249, 115, 22, 0.18)")
+    if uv < 11:
+        return ("Très élevé", "#ef4444", "rgba(239, 68, 68, 0.18)")
+    return ("Extrême", "#a855f7", "rgba(168, 85, 247, 0.22)")
+
+
+def _ressenti_temperature(t: float | None, wspd: float | None, rhum: float | None) -> float | None:
+    """Calcule une estimation de la température ressentie (°C)."""
+    if t is None:
+        return None
+    try:
+        e = (rhum / 100.0) * 6.105 * np.exp((17.27 * t) / (237.7 + t)) if rhum is not None else 10.0
+        v = (wspd / 3.6) if wspd is not None else 3.0
+        at = t + 0.33 * e - 0.70 * v - 4.0
+        return round(float(at), 1)
+    except Exception:
+        return round(float(t), 1)
+
+
+def _styliser_figure(fig: go.Figure, hauteur: int = 360) -> go.Figure:
+    """Harmonise le style d'un graphique Plotly avec le design system moderne."""
+    fig.update_layout(
+        height=hauteur,
+        margin=dict(l=24, r=24, t=36, b=24),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(family="Plus Jakarta Sans, sans-serif"),
+        hoverlabel=dict(font_size=12, font_family="Plus Jakarta Sans"),
+    )
+    fig.update_xaxes(
+        gridcolor="rgba(128, 128, 128, 0.12)",
+        zerolinecolor="rgba(128, 128, 128, 0.15)",
+    )
+    fig.update_yaxes(
+        gridcolor="rgba(128, 128, 128, 0.12)",
+        zerolinecolor="rgba(128, 128, 128, 0.15)",
+    )
+    return fig
+
+
 # --------------------------------------------------------------------------
 # Barre latérale : paramètres
 # --------------------------------------------------------------------------
@@ -241,17 +502,31 @@ mode_localisation = st.sidebar.radio(
 )
 
 if mode_localisation == "Gouvernorat":
-    liste_villes = list(VILLES.keys())
-    # Sousse ou Tunis en premier par défaut car modèles déjà entraînés
-    idx_defaut = liste_villes.index("Tunis") if "Tunis" in liste_villes else (
-        liste_villes.index("Sousse") if "Sousse" in liste_villes else 0
+    region_filtre = st.sidebar.selectbox(
+        "🗺️ Filtrer par région",
+        ["Toutes les régions (24)"] + list(REGIONS_TUNISIE.keys()),
+        index=0,
     )
+    if region_filtre == "Toutes les régions (24)":
+        liste_villes = list(VILLES.keys())
+    else:
+        liste_villes = [v for v in REGIONS_TUNISIE[region_filtre] if v in VILLES]
+
+    idx_defaut = 0
+    if "derniere_ville_selectionnee" in st.session_state and st.session_state["derniere_ville_selectionnee"] in liste_villes:
+        idx_defaut = liste_villes.index(st.session_state["derniere_ville_selectionnee"])
+    elif "Tunis" in liste_villes:
+        idx_defaut = liste_villes.index("Tunis")
+    elif "Sousse" in liste_villes:
+        idx_defaut = liste_villes.index("Sousse")
+
     ville = st.sidebar.selectbox(
-        "Gouvernorat (24 en Tunisie)",
+        f"Gouvernorat ({len(liste_villes)} disponible{'s' if len(liste_villes) > 1 else ''})",
         liste_villes,
         index=idx_defaut,
         format_func=lambda v: f"{v} ({obtenir_info_geographique(v)['region']}) {'✅' if predict_module.modeles_complets(v) else '⏳'}",
     )
+    st.session_state["derniere_ville_selectionnee"] = ville
     lat, lon = VILLES[ville]
     info_geo = obtenir_info_geographique(ville)
 elif mode_localisation == "Coordonnées GPS":
@@ -298,11 +573,27 @@ if bouton_train:
             st.sidebar.error(f"❌ Échec de l'entraînement : {exc}")
 
 st.sidebar.markdown("### 🤖 Assistant IA Tounsi")
-cle_openai_custom = st.sidebar.text_input(
-    "Clé OpenAI (optionnelle)",
-    type="password",
-    help="Par défaut, le moteur local 100% tunisien (Derja) est actif sans clé. Vous pouvez renseigner votre clé OpenAI pour activer GPT-4o-mini.",
+mode_ia = st.sidebar.radio(
+    "Moteur IA",
+    ["Local Derja (Défaut)", "Ollama (DeepSeek-R1 7B)", "OpenAI GPT-4o-mini"],
+    index=0,
+    help="Choisissez le moteur d'intelligence artificielle pour l'assistant météo."
 )
+
+cle_openai_custom = ""
+ollama_model_choice = "deepseek-r1:7b"
+if mode_ia == "OpenAI GPT-4o-mini":
+    cle_openai_custom = st.sidebar.text_input(
+        "Clé OpenAI",
+        type="password",
+        help="Entrez votre clé API OpenAI.",
+    )
+elif mode_ia == "Ollama (DeepSeek-R1 7B)":
+    ollama_model_choice = st.sidebar.text_input(
+        "Modèle Ollama",
+        value="deepseek-r1:7b",
+        help="Nom du modèle local tournant sur Ollama (ex: deepseek-r1:7b).",
+    )
 
 st.sidebar.markdown("---")
 st.sidebar.caption(
@@ -430,17 +721,148 @@ onglet_prev, onglet_chat, onglet_perf, onglet_clim = st.tabs(
 )
 
 with onglet_prev:
-    if not resultat:
-        st.warning(
-            f"ℹ️ **Modèles ML à entraîner pour {ville} :** "
-            f"Cliquez sur **🚀 Entraîner / Ré-entraîner** dans la barre latérale pour entraîner les 6 modèles ML (2 à 3 min).\n\n"
-            f"En attendant, retrouvez les **conditions temps réel ci-dessous** et discutez avec l'**Assistant IA Tounsi** dans le 2ème onglet !"
+    # 1. Conditions météo en direct (Hero Card)
+    if live:
+        temp_reel = live.get("temp_c")
+        rhum_reel = live.get("rhum")
+        wspd_reel = live.get("wspd")
+        code_wmo = live.get("code")
+        desc_ciel = live.get("description", "Temps variable")
+        icone_wmo, desc_ciel_wmo = _icone_meteo(code_wmo)
+        if desc_ciel == "Temps variable":
+            desc_ciel = desc_ciel_wmo
+        uv_val = live.get("uv")
+        pres_val = live.get("pres")
+        wdir_val = live.get("direction", "n/c")
+        horodatage = live.get("horodatage", "Direct")
+
+        ressenti_val = _ressenti_temperature(temp_reel, rhum_reel, wspd_reel)
+        ressenti_str = (
+            f"· Ressenti {U.fmt_temperature(ressenti_val, systeme)}"
+            if ressenti_val is not None else ""
         )
-    else:
+        _uv_label, _uv_color, _uv_bg = _badge_uv(uv_val)
+        badge_uv_html = (
+            f'<span style="background:{_uv_bg}; color:{_uv_color}; border:1px solid {_uv_color}44; '
+            f'border-radius:9999px; padding:5px 14px; font-size:0.82rem; font-weight:700; display:inline-block;">'
+            f'☀️ UV : {_uv_label}</span>'
+        )
+
+        st.markdown(f"""
+        <div class="live-hero-card">
+            <div class="live-hero-header">
+                <div>
+                    <span class="live-pill"><span class="live-dot"></span> LIVE MÉTÉO EN DIRECT</span>
+                    <h2 style="margin:8px 0 2px 0; font-size:1.85rem; font-weight:800; letter-spacing:-0.5px;">
+                        {ville} <span style="font-size:1.25rem; opacity:0.8; font-weight:400;">({info_geo.get('nom_ar', '')})</span>
+                    </h2>
+                    <div style="font-size:0.92rem; opacity:0.85;">
+                        {info_geo.get('region')} · {info_geo.get('zone')} · Relevé à {horodatage}
+                    </div>
+                </div>
+                <div style="text-align:right;">
+                    {badge_uv_html}
+                </div>
+            </div>
+            <div class="live-hero-body">
+                <div style="display:flex; align-items:center; gap:16px;">
+                    <span style="font-size:3.5rem; line-height:1;">{icone_wmo}</span>
+                    <div>
+                        <div class="live-temp-display">
+                            {U.fmt_temperature(temp_reel, systeme)}
+                        </div>
+                        <div style="font-size:0.95rem; font-weight:600; opacity:0.9;">
+                            {desc_ciel} <span style="opacity:0.75; font-size:0.85rem; font-weight:400;">{ressenti_str}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="live-hero-stats">
+                    <div class="live-stat-chip">
+                        <span style="opacity:0.75;">💨 Vent :</span>
+                        <b>{U.fmt_vitesse(wspd_reel, systeme)}</b>
+                        <span style="opacity:0.75;">({wdir_val})</span>
+                    </div>
+                    <div class="live-stat-chip">
+                        <span style="opacity:0.75;">💧 Humidité :</span>
+                        <b>{_texte(rhum_reel, '{:.0f}', ' %')}</b>
+                    </div>
+                    <div class="live-stat-chip">
+                        <span style="opacity:0.75;">⏲️ Pression :</span>
+                        <b>{_texte(pres_val, '{:.0f}', ' hPa')}</b>
+                    </div>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # Fiche géographique & identité territoriale
+    with st.expander(f"🗺️ Situation géographique & profil territorial : {ville} ({info_geo.get('nom_ar', '')})", expanded=False):
+        gcol1, gcol2 = st.columns([1, 2])
+        with gcol1:
+            st.markdown(f"""
+            - **Région :** `{info_geo.get('region')}` ({info_geo.get('zone')})
+            - **Milieu / Relief :** {info_geo.get('milieu')}
+            - **Altitude :** ~`{info_geo.get('altitude_m')} m`
+            - **Façade maritime :** `{'🌊 Oui (Littoral)' if info_geo.get('facade_maritime') else '🏞️ Non (Gouvernorat intérieur)'}`
+            - **Voisins limitrophes :** {', '.join(info_geo.get('voisins', [])) if info_geo.get('voisins') else 'Point GPS'}
+            """)
+        with gcol2:
+            st.markdown(f"""
+            **Situation géographique :**
+            {info_geo.get('description_fr')}
+
+            **Climat local & influence du relief :**
+            *{info_geo.get('climat')}*
+            """)
+
+    st.markdown("---")
+
+    if not (resultat and premier):
         st.info(
-            f"📅 Prévisions pour les **{horizon} prochain(s) jour(s)** — "
-            f"à partir du dernier relevé observé : **{resultat['date_derniere_observation']}**."
+            f"💡 **Modèles ML non encore entraînés pour {ville} :** "
+            f"Les prévisions multi-jours avancées, la jauge de risque de pluie et l'intervalle de confiance "
+            f"s'activeront dès l'entraînement terminé (cliquez sur **🚀 Entraîner / Ré-entraîner** dans la barre latérale).\n\n"
+            f"👉 Vous pouvez dès maintenant explorer les **conditions réelles ci-dessus** et échanger avec l'**Assistant IA Tounsi 🇹🇳** dans le 2ème onglet !"
         )
+        date_demain = str(date.today() + timedelta(days=1))
+        horaire_demain = weather_api.heure_pleine_demain(horaire, date_demain)
+        if not horaire_demain.empty:
+            st.subheader(f"⏱️ Prévision heure par heure (Open-Meteo) — {date_demain}")
+            libelle_t = U.libelle_temperature(systeme)
+            fig_heure = go.Figure()
+            fig_heure.add_trace(go.Bar(
+                x=horaire_demain.index, y=horaire_demain["prcp_prob"],
+                name="Probabilité de pluie (%)", marker_color="#38bdf8", opacity=0.45,
+                yaxis="y2",
+            ))
+            fig_heure.add_trace(go.Scatter(
+                x=horaire_demain.index,
+                y=U.serie_temperature(horaire_demain["temp"].tolist(), systeme),
+                name=f"Température ({libelle_t})", mode="lines+markers",
+                line=dict(color="#f43f5e", width=2.4),
+            ))
+            fig_heure.update_layout(
+                height=340, margin=dict(l=20, r=20, t=20, b=20),
+                yaxis=dict(title=f"Température ({libelle_t})"),
+                yaxis2=dict(title="Pluie (%)", overlaying="y", side="right", range=[0, 100]),
+                legend=dict(orientation="h", yanchor="bottom", y=1.02),
+                hovermode="x unified",
+            )
+            fig_heure.update_xaxes(tickformat="%H:%M")
+            _styliser_figure(fig_heure)
+            st.plotly_chart(fig_heure, use_container_width=True)
+    else:
+        st.markdown(f"""
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span class="badge-active">🔮 Modèles ML</span>
+                <span style="font-weight:700; font-size:1.1rem;">Prévisions sur {horizon} jour(s)</span>
+            </div>
+            <span style="font-size:0.85rem; opacity:0.8;">
+                Dernier relevé observé : <b>{resultat['date_derniere_observation']}</b>
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
 
         col1, col2, col3, col4 = st.columns(4)
         delta_tmax = premier["ecart_moyenne"]
@@ -472,74 +894,48 @@ with onglet_prev:
                 "estimée par quantiles résiduels du jeu de test (élargie en √horizon)."
             )
 
-    if live:
-        st.markdown("#### 🛰️ Conditions actuelles (Open-Meteo — temps réel)")
-        lc = st.columns(6)
-        lc[0].metric("Température", U.fmt_temperature(live.get("temp_c"), systeme))
-        lc[1].metric("Ciel", live.get("description", "n/c"))
-        lc[2].metric("Humidité", _texte(live.get("rhum"), "{:.0f}", " %"))
-        lc[3].metric("Vent", U.fmt_vitesse(live.get("wspd"), systeme),
-                     delta=f"🧭 {live.get('direction', 'n/c')}")
-        lc[4].metric("Pression", _texte(live.get("pres"), "{:.0f}", " hPa"))
-        lc[5].metric("Indice UV", _texte(live.get("uv"), "{:.1f}"))
-        st.caption(f"Relevé à : {live.get('horodatage', 'n/c')} (heure locale du point).")
+        # Grille visuelle de prévisions multi-jours (Cards deck)
+        st.markdown(f"#### 📅 Vue synthétique ({horizon} jours)")
+        cards_html = []
+        jours_semaine = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"]
+        for p in previsions:
+            p_dt = pd.to_datetime(p["date"])
+            jour_nom = jours_semaine[p_dt.weekday()]
+            jour_str = f"{jour_nom} {p_dt.day:02d}/{p_dt.month:02d}"
+            is_demain = p["horizon"] == 1
+            card_cls = "forecast-card card-today" if is_demain else "forecast-card"
+            label_h = "Demain (J+1)" if is_demain else f"J+{p['horizon']}"
 
-    # Fiche géographique & identité territoriale
-    with st.expander(f"🗺️ Situation géographique & profil territorial : {ville} ({info_geo.get('nom_ar', '')})", expanded=False):
-        gcol1, gcol2 = st.columns([1, 2])
-        with gcol1:
-            st.markdown(f"""
-            - **Région :** `{info_geo.get('region')}` ({info_geo.get('zone')})
-            - **Milieu / Relief :** {info_geo.get('milieu')}
-            - **Altitude :** ~`{info_geo.get('altitude_m')} m`
-            - **Façade maritime :** `{'🌊 Oui (Littoral)' if info_geo.get('facade_maritime') else '🏞️ Non (Gouvernorat intérieur)'}`
-            - **Voisins limitrophes :** {', '.join(info_geo.get('voisins', [])) if info_geo.get('voisins') else 'Point GPS'}
+            # Emojis adaptés
+            if p["risque_pluie"] or p["proba_pluie"] >= 0.5:
+                ico = "🌧️"
+            elif p["proba_pluie"] >= 0.25:
+                ico = "⛅"
+            else:
+                ico = "☀️"
+
+            tmax_str = U.fmt_temperature(p["tmax"], systeme)
+            tmin_str = U.fmt_temperature(p["tmin"], systeme)
+            rain_pct = int(round(p["proba_pluie"] * 100))
+            rain_badge = f'<span style="background:rgba(56,189,248,0.18); color:#38bdf8; padding:2px 8px; border-radius:12px; font-size:0.75rem; font-weight:700;">💧 {rain_pct}%</span>'
+            wspd_str = U.fmt_vitesse(p["wspd"], systeme)
+
+            cards_html.append(f"""
+            <div class="{card_cls}">
+                <div style="font-size:0.75rem; font-weight:700; opacity:0.8; text-transform:uppercase;">{label_h}</div>
+                <div style="font-size:0.85rem; font-weight:600; margin-bottom:4px;">{jour_str}</div>
+                <div style="font-size:2.2rem; margin:6px 0;">{ico}</div>
+                <div style="font-weight:800; font-size:1.15rem; color:#f87171;">{tmax_str}</div>
+                <div style="font-size:0.9rem; opacity:0.75; margin-bottom:8px;">{tmin_str}</div>
+                <div style="display:flex; flex-direction:column; gap:4px; align-items:center;">
+                    {rain_badge}
+                    <span style="font-size:0.75rem; opacity:0.8;">💨 {wspd_str}</span>
+                </div>
+            </div>
             """)
-        with gcol2:
-            st.markdown(f"""
-            **Situation géographique :**  
-            {info_geo.get('description_fr')}
 
-            **Climat local & influence du relief :**  
-            *{info_geo.get('climat')}*
-            """)
+        st.markdown(f'<div class="forecast-grid">{"".join(cards_html)}</div>', unsafe_allow_html=True)
 
-    st.markdown("---")
-
-    if not (resultat and premier):
-        st.info(
-            f"💡 **Modèles ML non encore entraînés pour {ville} :** "
-            f"Les prévisions multi-jours avancées, la jauge de risque de pluie et l'intervalle de confiance "
-            f"s'activeront dès l'entraînement terminé (cliquez sur **🚀 Entraîner / Ré-entraîner** dans la barre latérale).\n\n"
-            f"👉 Vous pouvez dès maintenant explorer les **conditions réelles ci-dessus** et échanger avec l'**Assistant IA Tounsi 🇹🇳** dans le 2ème onglet !"
-        )
-        date_demain = str(date.today() + timedelta(days=1))
-        horaire_demain = weather_api.heure_pleine_demain(horaire, date_demain)
-        if not horaire_demain.empty:
-            st.subheader(f"⏱️ Prévision heure par heure (Open-Meteo) — {date_demain}")
-            libelle_t = U.libelle_temperature(systeme)
-            fig_heure = go.Figure()
-            fig_heure.add_trace(go.Bar(
-                x=horaire_demain.index, y=horaire_demain["prcp_prob"],
-                name="Probabilité de pluie (%)", marker_color="#636EFA", opacity=0.35,
-                yaxis="y2",
-            ))
-            fig_heure.add_trace(go.Scatter(
-                x=horaire_demain.index,
-                y=U.serie_temperature(horaire_demain["temp"].tolist(), systeme),
-                name=f"Température ({libelle_t})", mode="lines+markers",
-                line=dict(color="#EF553B", width=2),
-            ))
-            fig_heure.update_layout(
-                height=340, margin=dict(l=20, r=20, t=20, b=20),
-                yaxis=dict(title=f"Température ({libelle_t})"),
-                yaxis2=dict(title="Pluie (%)", overlaying="y", side="right", range=[0, 100]),
-                legend=dict(orientation="h", yanchor="bottom", y=1.02),
-                hovermode="x unified",
-            )
-            fig_heure.update_xaxes(tickformat="%H:%M")
-            st.plotly_chart(fig_heure, use_container_width=True)
-    else:
         col_gauche, col_droite = st.columns([1, 2])
         with col_gauche:
             st.subheader("☔ Probabilité de pluie demain")
@@ -553,15 +949,16 @@ with onglet_prev:
                     "axis": {"range": [0, 100]},
                     "bar": {"color": _couleur_pluie(proba_pct), "thickness": 0.35},
                     "steps": [
-                        {"range": [0, 25], "color": "#D4EDDA"},
-                        {"range": [25, 50], "color": "#FFF3CD"},
-                        {"range": [50, 75], "color": "#F8D7DA"},
-                        {"range": [75, 100], "color": "#F5C6CB"},
+                        {"range": [0, 25], "color": "rgba(46, 204, 113, 0.25)"},
+                        {"range": [25, 50], "color": "rgba(241, 196, 15, 0.25)"},
+                        {"range": [50, 75], "color": "rgba(230, 126, 34, 0.25)"},
+                        {"range": [75, 100], "color": "rgba(231, 76, 60, 0.35)"},
                     ],
-                    "threshold": {"line": {"color": "black", "width": 3}, "thickness": 0.9, "value": 50},
+                    "threshold": {"line": {"color": "#ef4444", "width": 3}, "thickness": 0.9, "value": 50},
                 },
             ))
             fig_jauge.update_layout(height=300, margin=dict(l=30, r=30, t=50, b=10))
+            _styliser_figure(fig_jauge)
             st.plotly_chart(fig_jauge, use_container_width=True)
             st.caption(
                 f"Seuil « jour pluvieux » : prcp > {resultat['seuil_pluie_mm']} mm — "
@@ -579,14 +976,14 @@ with onglet_prev:
                 fig_heure = go.Figure()
                 fig_heure.add_trace(go.Bar(
                     x=horaire_demain.index, y=horaire_demain["prcp_prob"],
-                    name="Probabilité de pluie (%)", marker_color="#636EFA", opacity=0.35,
+                    name="Probabilité de pluie (%)", marker_color="#38bdf8", opacity=0.45,
                     yaxis="y2",
                 ))
                 fig_heure.add_trace(go.Scatter(
                     x=horaire_demain.index,
                     y=U.serie_temperature(horaire_demain["temp"].tolist(), systeme),
                     name=f"Température ({libelle_t})", mode="lines+markers",
-                    line=dict(color="#EF553B", width=2),
+                    line=dict(color="#f43f5e", width=2.4),
                 ))
                 fig_heure.update_layout(
                     height=340, margin=dict(l=20, r=20, t=20, b=20),
@@ -596,6 +993,7 @@ with onglet_prev:
                     hovermode="x unified",
                 )
                 fig_heure.update_xaxes(tickformat="%H:%M")
+                _styliser_figure(fig_heure)
                 st.plotly_chart(fig_heure, use_container_width=True)
 
         st.markdown("---")
@@ -659,6 +1057,7 @@ with onglet_prev:
                 legend=dict(orientation="h", yanchor="bottom", y=1.02),
                 hovermode="x unified",
             )
+            _styliser_figure(fig_multi)
             st.plotly_chart(fig_multi, use_container_width=True)
 
 # ==========================================================================
@@ -688,21 +1087,36 @@ with onglet_chat:
     """, unsafe_allow_html=True)
 
     st.markdown("##### 💡 As'el b clique wa7da (Suggestions rapides) :")
-    c1, c2, c3 = st.columns(3)
-    quick_list = [
-        f"Win jéya {ville} géographiquement ? 🗺️",
-        f"Chnowa l'jaw lyoum f {ville} ?",
-        f"Fama mtar ghodwa f {ville} ?",
-        f"Chnowa nelbes ghodwa sbah ?",
-        f"El ba7r behi lil 3wema ?",
-        f"Ta9s behi lil 5rouj w 9ahwa ?",
-    ]
+    quick_tabs = st.tabs(["🌤️ Ta9s & Mtar", "👕 5rouj & Lbsa", "🌊 Ba7r & Joghrafya"])
 
-    for i, q in enumerate(quick_list):
-        col_btn = [c1, c2, c3][i % 3]
-        if col_btn.button(q, key=f"btn_quick_{i}", use_container_width=True):
-            st.session_state["pending_chat_prompt"] = q
-            st.rerun()
+    QUICK_PROMPTS = {
+        0: [  # Ta9s & Mtar
+            f"Chnowa l'jaw lyoum f {ville} ?",
+            f"Fama mtar ghodwa f {ville} ?",
+            f"Chnowa el 7arara ghodwa f {ville} ?",
+            f"El jaw behi el jom3a ljaya f {ville} ?",
+        ],
+        1: [  # 5rouj & Lbsa
+            f"Chnowa nelbes ghodwa sbah f {ville} ?",
+            f"Lézem nekhdh parapluie ghodwa ?",
+            f"Ta9s behi lil 5rouj w 9ahwa f {ville} ?",
+            f"Fama ri7 barcha ghodwa ?",
+        ],
+        2: [  # Ba7r & Joghrafya
+            f"El ba7r behi lil 3wema lyoum f {ville} ?",
+            f"Win jéya {ville} géographiquement ? 🗺️",
+            f"Chnowa el farq bin {ville} w Tunis f ta9s ?",
+            f"Amel comparaison bin les gouvernorats tounsia ?",
+        ],
+    }
+
+    for tab_idx, tab_obj in enumerate(quick_tabs):
+        with tab_obj:
+            btn_cols = st.columns(2)
+            for btn_i, q in enumerate(QUICK_PROMPTS[tab_idx]):
+                if btn_cols[btn_i % 2].button(q, key=f"btn_quick_{tab_idx}_{btn_i}", use_container_width=True):
+                    st.session_state["pending_chat_prompt"] = q
+                    st.rerun()
 
     # Initialisation de l'historique
     if "messages_tounsi" not in st.session_state:
@@ -737,11 +1151,14 @@ with onglet_chat:
 
         with st.chat_message("assistant", avatar="🇹🇳"):
             with st.spinner("L'assistant 9a3ed yjeweb fik... 🇹🇳"):
+                use_ollama_flag = (mode_ia == "Ollama (DeepSeek-R1 7B)") if "mode_ia" in locals() else False
                 reponse_ai = tounsi_ai.generer_reponse_ai_tounsi(
                     prompt_user,
                     historique=st.session_state["messages_tounsi"][:-1],
                     gouvernorat_actif=ville,
                     api_key=cle_openai_custom if "cle_openai_custom" in locals() and cle_openai_custom else None,
+                    use_ollama=use_ollama_flag,
+                    ollama_model=ollama_model_choice if "ollama_model_choice" in locals() else "deepseek-r1:7b",
                 )
                 st.markdown(reponse_ai)
                 st.session_state["messages_tounsi"].append({"role": "assistant", "content": reponse_ai})
@@ -815,6 +1232,7 @@ def _afficher_onglet_perf():
                 xaxis_title="Date", yaxis_title=f"Tmax ({libelle_t})", hovermode="x unified",
             )
             fig.update_xaxes(rangeslider=dict(visible=True))
+            _styliser_figure(fig)
             st.plotly_chart(fig, use_container_width=True)
         else:
             st.warning("Fichier de prédictions de test introuvable — ré-entraînez les modèles.")
@@ -839,6 +1257,7 @@ def _afficher_onglet_perf():
                 legend=dict(orientation="h", yanchor="bottom", y=1.02),
                 hovermode="x unified",
             )
+            _styliser_figure(fig_pluie)
             st.plotly_chart(fig_pluie, use_container_width=True)
 
     st.markdown("---")
@@ -860,6 +1279,7 @@ def _afficher_onglet_perf():
         height=400, margin=dict(l=20, r=20, t=10, b=20),
         xaxis_title="Importance (réduction d'impureté)", yaxis_title="",
     )
+    _styliser_figure(fig_imp)
     st.plotly_chart(fig_imp, use_container_width=True)
 
     st.markdown("---")
@@ -927,6 +1347,7 @@ def _afficher_onglet_perf():
                         title=f"Explication SHAP — {LIBELLES_CIBLES[cible_xai]} — {libelle_jour}",
                         xaxis_title=titre_axe, yaxis_title="",
                     )
+                    _styliser_figure(fig_shap)
                     st.plotly_chart(fig_shap, use_container_width=True)
                     base = explication["base"]
                     pred = explication["prediction"]
@@ -1008,6 +1429,7 @@ with onglet_clim:
                 hovermode="x unified",
             )
             fig_norm.update_xaxes(categoryorder="array", categoryarray=MOIS_ORDRE)
+            _styliser_figure(fig_norm)
             st.plotly_chart(fig_norm, use_container_width=True)
 
         with col_clim2:
@@ -1021,6 +1443,7 @@ with onglet_clim:
                 xaxis_title="Mois", yaxis_title="Précipitations (mm)",
             )
             fig_pluie_mois.update_xaxes(categoryorder="array", categoryarray=MOIS_ORDRE)
+            _styliser_figure(fig_pluie_mois)
             st.plotly_chart(fig_pluie_mois, use_container_width=True)
 
         col_clim3, col_clim4 = st.columns(2)
@@ -1037,6 +1460,7 @@ with onglet_clim:
                 xaxis_title="Mois", yaxis_title=f"Tmax ({libelle_t})",
             )
             fig_box.update_xaxes(categoryorder="array", categoryarray=MOIS_ORDRE)
+            _styliser_figure(fig_box)
             st.plotly_chart(fig_box, use_container_width=True)
 
         with col_clim4:
@@ -1056,6 +1480,7 @@ with onglet_clim:
                 yaxis_title=f"Température ({libelle_t})",
                 legend=dict(orientation="h", yanchor="bottom", y=1.02),
             )
+            _styliser_figure(fig_saison)
             st.plotly_chart(fig_saison, use_container_width=True)
 
         st.subheader("🔥 Anomalies annuelles de température (réchauffement local)")
@@ -1069,6 +1494,7 @@ with onglet_clim:
             height=360, margin=dict(l=20, r=20, t=30, b=20),
             xaxis_title="Année", yaxis_title=f"Écart de Tmax moyenne ({libelle_t})",
         )
+        _styliser_figure(fig_anom)
         st.plotly_chart(fig_anom, use_container_width=True)
         st.caption(
             f"Référence : moyenne de la période {df_hist.index.min().date()} → "

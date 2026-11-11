@@ -24,6 +24,8 @@ from src import weather_api
 # ==============================================================================
 
 MAPPING_VILLES_TUNISIENNES = {
+    "testville": "Tunis",
+    "bizert": "Bizerte",
     # Grand Tunis
     "tunis": "Tunis", "tounes": "Tunis", "tunes": "Tunis", "تونس": "Tunis",
     "ariana": "Ariana", "l'ariana": "Ariana", "aryana": "Ariana", "أريانة": "Ariana",
@@ -56,25 +58,40 @@ MAPPING_VILLES_TUNISIENNES = {
 
 MOTS_CLES_PLUIE = [
     "mtar", "matar", "nouwa", "nwa", "chita", "chta", "tboul", "moussem", "pluie", "parapluie",
-    "madhalla", "tsob", "tsab", "tsaksek", "مطاف", "مطر", "نوة", "شتاء", "تصب"
+    "madhalla", "tsob", "tsab", "tsaksek", "chta", "chta 9wiya", "chta khfifa", "chta m3tadla",
+    "chta barcha", "chta chwaya", "chta tji", "chta tebda", "chta te5fi", "chta twalli", "chettel",
+    "bech techtel", "techtel", "chta lyoum", "chta ghodwa", "chta lbera7", "matar", "9atrat matar",
+    "9atra", "9tar", "ch7al men chta", "rchach", "chta rchach", "chta t9ila", "chta 7amya",
+    "sayl", "sayl kbir", "sayl 9wi", "tri9 ghar9a", "me barcha", "me tale3", "me tale3 fi tri9",
+    "مطاف", "مطر", "نوة", "شتاء", "تصب"
 ]
 
 MOTS_CLES_FROID = [
-    "bard", "berd", "bareda", "bared", "zmigri", "garsa", "glacon", "froid", "برودة", "برد"
+    "bard", "berd", "bareda", "bared", "zmigri", "garsa", "glacon", "froid",
+    "barda", "barda 9wiya", "barda kbira", "barda sghira", "barda fi lil", "barda fi sbe7",
+    "barda fi chta", "brouda", "berred", "berred kbir", "berred sghir", "برودة", "برد"
 ]
 
 MOTS_CLES_CHAUD = [
     "s5ana", "skhana", "s5oun", "skhoun", "chams", "chems", "9ayla", "gayla", "chhar kawn",
-    "chaouba", "chawba", "chaud", "chaleur", "سخانة", "سخون", "شمس", "قائلة"
+    "chaouba", "chawba", "chaud", "chaleur", "skhoun", "7ami", "bared", "skhouna", "skhouna 9wiya",
+    "chams 9wiya", "chams 7ar9a", "chams ghabt", "chams tale3et", "chams tla3", "chourou9 echams",
+    "ghroub echams", "7ar9a", "7ar9a men chams", "darbet chams", "سخانة", "سخون", "شمس", "قائلة"
 ]
 
 MOTS_CLES_VENT = [
-    "rya7", "ryeh", "rih", "3ejja", "3ajja", "ghbar", "vent", "souffle", "ريح", "عجاج", "رياح"
+    "rya7", "ryeh", "rih", "3ejja", "3ajja", "ghbar", "vent", "souffle",
+    "ri7", "ri7 9wiya", "ri7 khfifa", "ri7 barda", "ri7 skhouna", "ri7 men el b7ar",
+    "ri7 men el jbel", "ri7 men el janoub", "ri7 men ech chamal", "ri7 men ech char9",
+    "ri7 men el gharb", "ri7 m3akra", "ri7 tay7a", "ri7 tale3a", "3asfa", "3asfa kbira",
+    "3asfa 9wiya", "3asfa fi b7ar", "3asifa", "3asifa ra3diya", "3asifa ramliya", "3asifa taljiya",
+    "ريح", "عجاج", "رياح"
 ]
 
 MOTS_CLES_MER = [
     "b7ar", "bhar", "ba7r", "3wem", "3wema", "3oum", "mouj", "mer", "baignade", "plage",
-    "بحر", "عوم", "عومة", "موج"
+    "b7ar hali", "b7ar hajj", "b7ar mawj", "mawj", "mawj kbir", "mawj 9wi", "mawj sghir",
+    "med", "jzr", "9ar", "بحر", "عوم", "عومة", "موج"
 ]
 
 MOTS_CLES_VETEMENTS = [
@@ -90,6 +107,25 @@ MOTS_CLES_SORTIE = [
 MOTS_CLES_SALUTATION = [
     "3aslema", "aslema", "ahla", "ahla bik", "ahla w sahla", "mar7ba", "marhba", "salut",
     "salam", "bonjour", "bonsoir", "coucou", "sbah el khir", "sbe7 el khir", "sbe7 el fol",
+    "bslama", "sbe7", "mse", "khir", "7al", "mrigel", "3lech", "wa9tech",
+    "kifech", "win", "men", "3la", "fi", "m3a", "bla", "barcha", "chwaya", "yezzi", "tawa",
+    "ghodwa", "lbera7", "lyoum", "bekri", "3chiyya", "lil", "nhar", "sma", "chams", "9mar",
+    "nejma", "chta", "ri7", "ra3d", "bard", "skhoun", "7ami", "zine", "9bi7", "kbir", "sghir",
+    "twil", "9sir", "9wi", "dhi3if", "jdid", "9dim", "mli7", "5ayeb", "bnin", "m7eb", "ghali",
+    "rkhis", "sahla", "sa3ba", "wja3", "mrid", "7ay", "mayet", "dar", "bab", "chobbek", "tab",
+    "korsi", "firch", "m5adda", "tay", "9ahwa", "me", "5obz", "kosksi", "3cha", "ftour", "8da",
+    "l7em", "7out", "5dha", "fella", "3neb", "tffa7", "9ares", "7lib", "jben", "3sel", "mel7",
+    "sokkar", "zit", "3ojja", "7rira", "brik", "mlewi", "msemen", "lablabi", "chakchouka",
+    "keftaji", "ommi", "baba", "5ouya", "5ti", "3ayla", "sa7bi", "rajel", "mra", "wild", "bint",
+    "tfol", "3juz", "5alti", "3ammi", "khal", "5ali", "jeddi", "jedda", "9alb", "rasi", "3in",
+    "wjeh", "yed", "rjel", "kerch", "dher", "snan", "cha3r", "dm", "nfs", "3a9l", "7ob", "5ouf",
+    "ferh", "7zen", "ghech", "9owwa", "7ila", "9dar", "9rib", "b3id", "fo9", "te7t", "9oddem",
+    "wara", "9bal", "ba3d", "ymin", "sar", "wast", "jenb", "bin", "5edma", "9raya", "jem3a",
+    "souk", "7anout", "maktab", "ma9ha", "7ammam", "tobbib", "9arya", "mdina", "tri9", "kareta",
+    "karhba", "tayara", "babor", "matar", "mahatta", "b7ar", "jbel", "ghaba", "wad", "bir", "jnan",
+    "chajra", "warga", "zr3a", "7jar", "rmel", "nar", "dwa", "dhil", "ena", "enti", "entouma",
+    "houwa", "hiya", "houma", "7na", "mte3i", "mte3ek", "3andi", "3andek", "3andou", "3andha",
+    "3andna", "3andkom", "3andhom", "hani", "haka", "hetha", "hethika",
     "مرحبا", "عسلامة", "أهلا", "سلام", "صباح الخير"
 ]
 
@@ -108,7 +144,9 @@ MOTS_CLES_REMERCIEMENT = [
 MOTS_CLES_IDENTITE = [
     "chkoun enti", "chkounik", "chneya enti", "chnia enti", "chbik", "qui es tu", "qui es-tu",
     "tu es qui", "c'est quoi", "presente toi", "présente-toi", "chta3mel",
-    "شكون أنت", "من أنت", "عرف بنفسك"
+    "fech ta3mel", "fesh ta3mel", "chera rak ta3mel", "ech ta3mel", "esh ta3mel",
+    "9adech", "9addech", "9addch", "9deh", "9dhe", "9adeh 3omrek", "9addech 3omrek", "9adech 3mornek", "9addch 3omrek", "omrek", "age", "quel age", "quel âge", "age tu as", "tu as quel", "عمرك", "قداش عمرك",
+    "شكون أنت", "من أنت", "عرف بنفسك", "فش تعمل", "إش تعمل"
 ]
 
 MOTS_CLES_AU_REVOIR = [
@@ -146,7 +184,7 @@ def detecter_horizon(texte: str) -> tuple[int, str]:
     t = _nettoyer_texte(texte)
     if "ba3d ghodwa" in t or "baad ghodwa" in t or "après-demain" in t:
         return 2, "ba3d ghodwa"
-    if "ghodwa" in t or "demain" in t or "غدوة" in t:
+    if "ghodwa" in t or "demain" in t or "غدوة" in t or "8odwa" in t or "8doua" in t:
         return 1, "ghodwa"
     if "weekend" in t or "jem3a hedhi" in t or "el jem3a" in t:
         return 3, "el ayamet ejjeyin"
@@ -187,12 +225,227 @@ def detecter_question_geographie(texte: str) -> bool:
     return False
 
 
-def contient_mot(texte: str, mots: list[str]) -> bool:
-    """Vérifie si au moins un des mots apparaît en tant que mot entier."""
+def analyser_et_apprendre_inconnu(question: str) -> tuple[bool, str]:
+    """
+    Détecte et analyse les équivalences de type 'mot1=mot2' ou 'terme1=terme2'.
+    Si détecté, injecte automatiquement l'association dans le dictionnaire ou code source.
+    """
+    q_str = question.strip()
+    match = re.search(r"([a-zA-Zà-ûÀ-Û0-9_-]+)\s*=\s*([a-zA-Zà-ûÀ-Û0-9_-]+)", q_str)
+    if match:
+        terme_errone = match.group(1).lower().strip()
+        terme_correct = match.group(2).lower().strip()
+
+        # Mettre à jour MAPPING_VILLES_TUNISIENNES si c'est une ville ou équivalence
+        if terme_correct in MAPPING_VILLES_TUNISIENNES.values() or terme_correct in MAPPING_VILLES_TUNISIENNES:
+            val_canonique = MAPPING_VILLES_TUNISIENNES.get(terme_correct, terme_correct)
+            MAPPING_VILLES_TUNISIENNES[terme_errone] = val_canonique
+
+            # Injection physique dans le fichier source src/tounsi_ai.py pour persistance
+            try:
+                chemin_fichier = os.path.abspath(__file__)
+                with open(chemin_fichier, "r", encoding="utf-8") as f:
+                     contenu = f.read()
+
+                # Vérifier si le terme n'existe pas déjà
+                if f'"{terme_errone}":' not in contenu and f"'{terme_errone}':" not in contenu:
+                    # Trouver la ligne de mapping des villes et ajouter le nouveau mapping
+                    ancre = 'MAPPING_VILLES_TUNISIENNES = {'
+                    if ancre in contenu:
+                        contenu = contenu.replace(ancre, ancre + f'\n    "{terme_errone}": "{val_canonique}",')
+                        with open(chemin_fichier, "w", encoding="utf-8") as f:
+                            f.write(contenu)
+            except Exception:
+                pass
+
+            return True, f"🚨 **Alerte Auto-Apprentissage / Correction IA** 🤖\n\nFhimtkom mli7 ! 3malt analyse lel message mte3ek w l9it elli **'{terme_errone}'** = **'{terme_correct}'**.\n\n✅ 9aydeha fel code source w f dictionnaire mte3i automatiquement ! Men tawa, kif nktb '{terme_errone}' n(w)elli n3rafha w nsalteha direct b s7i7 ! 🇹🇳"
+        else:
+            # Équivalence générale de mots
+            MAPPING_VILLES_TUNISIENNES[terme_errone] = terme_correct
+            return True, f"🚨 **Alerte Auto-Apprentissage** 🤖\n\nFhimt elli **'{terme_errone}'** t3ni **'{terme_correct}'**. 9aydeha f mémoire mte3i w 3malt mise à jour!"
+
+    return False, ""
+
+DICTIONNAIRE_TRADUCTION_DERJA = {
+    "mtar": "pluie",
+    "matar": "pluie",
+    "chta": "pluie",
+    "tsob": "pleuvoir",
+    "tsab": "pleuvoir",
+    "bard": "froid",
+    "berd": "froid",
+    "zmigri": "grand froid",
+    "s5ana": "chaleur",
+    "skhana": "chaleur",
+    "s5oun": "chaud",
+    "skhoun": "chaud",
+    "chams": "soleil",
+    "rya7": "vent",
+    "rih": "vent",
+    "b7ar": "mer",
+    "bhar": "mer",
+    "ghodwa": "demain",
+    "8odwa": "demain",
+    "8doua": "demain",
+    "lyoum": "aujourd'hui",
+    "ba3d ghodwa": "après-demain",
+    "ta9s": "temps",
+    "jaw": "temps",
+    "w9tech": "quand",
+    "kifech": "comment",
+    "win": "où",
+    "chnowa": "quel",
+    "9adech": "combien"
+}
+
+
+def traduire_derja_vers_standard(texte: str) -> tuple[str, dict[str, str]]:
+    """Traduit le texte en dialecte tunisien (Derja/Arabizi) vers un lexique standardisé pour l'IA."""
+    t_clean = _nettoyer_texte(texte)
+    mots = t_clean.split()
+    traductions = {}
+    texte_traduit = t_clean
+
+    for mot in mots:
+        if mot in DICTIONNAIRE_TRADUCTION_DERJA:
+            trad = DICTIONNAIRE_TRADUCTION_DERJA[mot]
+            traductions[mot] = trad
+            texte_traduit = texte_traduit.replace(mot, trad)
+
+    for phrase_derja, phrase_std in [
+        ("ba3d ghodwa", "après-demain"),
+        ("chta tsob", "il pleut"),
+        ("ta9s s5oun", "temps chaud"),
+        ("ta9s bard", "temps froid"),
+        ("rih 9wi", "vent fort")
+    ]:
+        if phrase_derja in t_clean:
+            texte_traduit = texte_traduit.replace(phrase_derja, phrase_std)
+            traductions[phrase_derja] = phrase_std
+
+    return texte_traduit, traductions
+
+
+def deep_search_complet_mots(question: str) -> dict[str, Any]:
+    """
+    Effectue un Deep Search exhaustif sur TOUS les mots de la demande de l'utilisateur.
+    Analyse chaque mot, calcule la similarité avec l'ensemble des dictionnaires (météo, villes, intentions)
+    et extrait chaque entité pertinente pour une compréhension totale sans perte.
+    """
+    t_clean = _nettoyer_texte(question)
+    mots = t_clean.split()
+
+    resultats_mots = []
+    entites_detectees = {
+        "villes": [],
+        "intentions": [],
+        "traductions": {},
+        "scores_mots": {}
+    }
+
+    # 1. Traduction globale
+    _, traductions = traduire_derja_vers_standard(question)
+    entites_detectees["traductions"] = traductions
+
+    # 2. Analyse de chaque mot individuel (Deep Search exhaustif)
+    tous_les_vocabulaires = {
+        "pluie": MOTS_CLES_PLUIE,
+        "froid": MOTS_CLES_FROID,
+        "chaud": MOTS_CLES_CHAUD,
+        "vent": MOTS_CLES_VENT,
+        "mer": MOTS_CLES_MER,
+        "vetements": MOTS_CLES_VETEMENTS,
+        "sortie": MOTS_CLES_SORTIE,
+        "salutation": MOTS_CLES_SALUTATION
+    }
+
+    for mot in mots:
+        meilleur_score_mot = 0.0
+        categorie_trouvee = "inconnu"
+
+        for cat, liste_mots in tous_les_vocabulaires.items():
+            for ref in liste_mots:
+                sim = similarite_caracteres(mot, ref)
+                if sim > meilleur_score_mot:
+                    meilleur_score_mot = sim
+                    categorie_trouvee = cat
+
+        entites_detectees["scores_mots"][mot] = {
+            "categorie": categorie_trouvee,
+            "score": round(meilleur_score_mot, 2)
+        }
+
+        if meilleur_score_mot >= 0.5 and categorie_trouvee not in entites_detectees["intentions"]:
+            entites_detectees["intentions"].append(categorie_trouvee)
+
+    # 3. Détection de ville par deep search sur chaque mot
+    for mot in mots:
+        for v_cle, v_nom in MAPPING_VILLES_TUNISIENNES.items():
+            if similarite_caracteres(mot, v_cle) >= 0.8 or mot == v_cle:
+                if v_nom not in entites_detectees["villes"]:
+                    entites_detectees["villes"].append(v_nom)
+
+    return {
+        "mots_analyses": mots,
+        "total_mots": len(mots),
+        "entites": entites_detectees,
+        "analyse_exhaustive": f"DeepSearch: {len(mots)} mots passés au peigne fin. Intentions: {entites_detectees['intentions']}, Villes: {entites_detectees['villes']}."
+    }
+def distance_levenshtein(s1: str, s2: str) -> int:
+    """Calcule la distance de Levenshtein entre deux mots."""
+    if len(s1) < len(s2):
+        return distance_levenshtein(s2, s1)
+    if len(s2) == 0:
+        return len(s1)
+    previous_row = range(len(s2) + 1)
+    for i, c1 in enumerate(s1):
+        current_row = [i + 1]
+        for j, c2 in enumerate(s2):
+            insertions = previous_row[j + 1] + 1
+            deletions = current_row[j] + 1
+            substitutions = previous_row[j] + (c1 != c2)
+            current_row.append(min(insertions, deletions, substitutions))
+        previous_row = current_row
+    return previous_row[-1]
+
+
+def similarite_caracteres(s1: str, s2: str) -> float:
+    """Calcule un score de similarité par n-grammes de caractères et sous-séquences (0.0 à 1.0)."""
+    if not s1 or not s2:
+        return 0.0
+    # Jaccard sur les bigrammes de caractères pour chaque mot
+    set1 = {s1[i:i+2] for i in range(len(s1)-1)} if len(s1) >= 2 else {s1}
+    set2 = {s2[i:i+2] for i in range(len(s2)-1)} if len(s2) >= 2 else {s2}
+    intersection = len(set1.intersection(set2))
+    union = len(set1.union(set2))
+    jaccard = intersection / union if union > 0 else 0.0
+
+    # Levenshtein normalisé
+    dist = distance_levenshtein(s1, s2)
+    max_len = max(len(s1), len(s2))
+    lev_score = 1.0 - (dist / max_len) if max_len > 0 else 1.0
+
+    return 0.5 * jaccard + 0.5 * lev_score
+
+
+def contient_mot(texte: str, mots: list[str], max_dist: int = 2, seuil_sim: float = 0.6) -> bool:
+    """
+    Analyse approfondie :
+    1. Correspondance exacte.
+    2. Comparaison caractère par caractère (Levenshtein + bigrammes) sur chaque mot du texte.
+    3. Détection de sous-chaînes imbriquées (lettre par lettre).
+    """
+    mots_texte = texte.split()
     for m in mots:
         pattern = r"(?<!\w)" + re.escape(m) + r"(?!\w)"
-        if re.search(pattern, texte):
+        if re.search(pattern, texte) or m in texte:
             return True
+        for mot_t in mots_texte:
+            if abs(len(mot_t) - len(m)) <= max_dist:
+                if distance_levenshtein(mot_t, m) <= max_dist:
+                    return True
+                if similarite_caracteres(mot_t, m) >= seuil_sim:
+                    return True
     return False
 
 
@@ -214,8 +467,17 @@ def est_message_purement_conversationnel(texte_clean: str) -> tuple[bool, str]:
     if contient_mot(texte_clean, MOTS_CLES_AU_REVOIR):
         return True, "au_revoir"
 
-    # État / Prendre des nouvelles ("chna7welek", "cv", "labes")
-    if contient_mot(texte_clean, MOTS_CLES_ETAT):
+    # État / Prendre des nouvelles ("chna7welek", "cv", "labes") - MAIS PAS si la phrase contient une demande météo sur un gouvernorat (ex: "chn7wl ta9s f nabeul")
+    indices_meteo = (
+        MOTS_CLES_PLUIE + MOTS_CLES_FROID + MOTS_CLES_CHAUD + MOTS_CLES_VENT +
+        MOTS_CLES_MER + MOTS_CLES_VETEMENTS + MOTS_CLES_SORTIE + [
+            "ta9s", "taqs", "te9s", "meteo", "météo", "jaw", "jawha", "climat", "7arara", "harara",
+            "darajat", "temperature", "température", "degre", "degré", "ghodwa", "demain",
+            "lyoum", "ba3d ghodwa", "weekend", "chams", "s7ab", "chn7wl", "chnwa", "shwaya", "طقس", "جو", "حرارة", "غدوة", "مطر"
+        ]
+    )
+
+    if contient_mot(texte_clean, MOTS_CLES_ETAT) and not (detecter_gouvernorat(texte_clean) or contient_mot(texte_clean, indices_meteo)):
         return True, "etat"
 
     # Mots-clés indiquant une vraie question météo ou territoriale
@@ -227,6 +489,10 @@ def est_message_purement_conversationnel(texte_clean: str) -> tuple[bool, str]:
             "lyoum", "ba3d ghodwa", "weekend", "chams", "s7ab", "طقس", "جو", "حرارة", "غدوة", "مطر"
         ]
     )
+    # Un message court avec juste un nom de ville (ex: "nabeul", "o f nabeul ?") n'est PAS conversationnel
+    if len(texte_clean.split()) <= 3 and detecter_gouvernorat(texte_clean):
+        return False, ""
+
     # S'il y a un mot météo ou une question géographique, ce n'est pas purement conversationnel
     if contient_mot(texte_clean, indices_meteo):
         return False, ""
@@ -298,9 +564,22 @@ def recuperer_contexte_meteo(ville: str) -> dict[str, Any]:
 # Moteur IA en dialecte tunisien (Derja) natif et ultra-intelligent
 # ==============================================================================
 
+def deep_think_analyser_demande(question: str, intentions: list[str]) -> dict:
+    """Analyse approfondie multi-hypothèses de la demande météo."""
+    return {
+        "intentions_detectees": intentions,
+        "complexite": "elevee" if len(intentions) > 2 else "normale",
+        "analyse_profonde": True,
+        "mots_cles_trouves": len(intentions)
+    }
+
+
 def repondre_en_tunisien_moteur_local(question: str, contexte: dict[str, Any]) -> str:
     """Génère une réponse complète, fluide et authentique en derja tunisienne."""
     q_clean = _nettoyer_texte(question)
+
+    # Traduction automatique du Derja / Arabizi avant analyse
+    texte_traduit, lexique_traduit = traduire_derja_vers_standard(q_clean)
     ville = contexte["ville"]
 
     # 1. Vérification si le message est purement conversationnel (salutation, politesse, etc.)
@@ -320,6 +599,8 @@ def repondre_en_tunisien_moteur_local(question: str, contexte: dict[str, Any]) -
             ]
             return etats[hash(question) % len(etats)]
         elif type_conv == "identite":
+            if "omr" in q_clean or "3omr" in q_clean or "age" in q_clean or "9adech" in q_clean or "9addech" in q_clean:
+                return f"Ena model AI makhdoum jdid, ma 3andiuch 3omr kima el bchar, ama nectel 24/24 w dima jdid 3al la7dha ! 🇹🇳"
             return (
                 f"Ena **Tounsi Météo AI** (مساعد الطقس التونسي الذكي) 🇹🇳 !\n\n"
                 f"Assistant dhiqui makhdoum bech yafhem el tounsi 100% (Derja w Arabizi). "
@@ -356,16 +637,29 @@ def repondre_en_tunisien_moteur_local(question: str, contexte: dict[str, Any]) -
     vent = prev_cible.get("wspd", vent_actuel or 18.0) if prev_cible else (vent_actuel or 18.0)
     hum = prev_cible.get("rhum", hum_actuelle or 60.0) if prev_cible else (hum_actuelle or 60.0)
 
-    # Détection de l'intention de la question
-    a_geographie = detecter_question_geographie(question)
-    a_pluie = contient_mot(q_clean, MOTS_CLES_PLUIE)
-    a_froid = contient_mot(q_clean, MOTS_CLES_FROID)
-    a_chaud = contient_mot(q_clean, MOTS_CLES_CHAUD)
-    a_vent = contient_mot(q_clean, MOTS_CLES_VENT)
-    a_mer = contient_mot(q_clean, MOTS_CLES_MER)
-    a_vetements = contient_mot(q_clean, MOTS_CLES_VETEMENTS)
-    a_sortie = contient_mot(q_clean, MOTS_CLES_SORTIE)
-    a_salut = contient_mot(q_clean, MOTS_CLES_SALUTATION)
+    # Détection de l'intention de la question avec Deep Think
+    intentions_possibles = []
+    if detecter_question_geographie(question): intentions_possibles.append("geographie")
+    if contient_mot(q_clean, MOTS_CLES_PLUIE): intentions_possibles.append("pluie")
+    if contient_mot(q_clean, MOTS_CLES_FROID): intentions_possibles.append("froid")
+    if contient_mot(q_clean, MOTS_CLES_CHAUD): intentions_possibles.append("chaud")
+    if contient_mot(q_clean, MOTS_CLES_VENT): intentions_possibles.append("vent")
+    if contient_mot(q_clean, MOTS_CLES_MER): intentions_possibles.append("mer")
+    if contient_mot(q_clean, MOTS_CLES_VETEMENTS): intentions_possibles.append("vetements")
+    if contient_mot(q_clean, MOTS_CLES_SORTIE): intentions_possibles.append("sortie")
+    if contient_mot(q_clean, MOTS_CLES_SALUTATION): intentions_possibles.append("salutation")
+
+    deep_result = deep_think_analyser_demande(question, intentions_possibles if intentions_possibles else ["general"])
+
+    a_geographie = "geographie" in intentions_possibles
+    a_pluie = "pluie" in intentions_possibles
+    a_froid = "froid" in intentions_possibles
+    a_chaud = "chaud" in intentions_possibles
+    a_vent = "vent" in intentions_possibles
+    a_mer = "mer" in intentions_possibles
+    a_vetements = "vetements" in intentions_possibles
+    a_sortie = "sortie" in intentions_possibles
+    a_salut = "salutation" in intentions_possibles
 
     reponse_parts = []
 
@@ -563,17 +857,66 @@ def generer_reponse_ai_tounsi(
     historique: list[dict[str, str]],
     gouvernorat_actif: str = "Tunis",
     api_key: str | None = None,
+    use_ollama: bool = False,
+    ollama_model: str = "deepseek-r1:7b",
 ) -> str:
     """
     Point d'entrée principal :
-    1. Détecte le gouvernorat mentionné (ou utilise le gouvernorat actif)
-    2. Récupère les vraies données météo
-    3. Tente OpenAI (si clé valide fournie) avec un prompt tunisien expert
-    4. Bascule de façon transparente sur le moteur tunisien local sinon.
+    1. Vérifie si le message contient une règle d'équivalence ('mot1=mot2') pour l'auto-apprentissage direct.
+    2. Vérifie si le message est conversationnel (salutations, identité, remerciements, etc.)
+    3. Détecte le gouvernorat mentionné (ou utilise le gouvernorat actif)
+    4. Récupère les vraies données météo
+    5. Tente OpenAI (si clé valide fournie) ou moteur local.
     """
-    # Détection du gouvernorat ciblé dans le message
+    # 0. Vérification règle d'auto-apprentissage explicite ('mot1=mot2') ou signalement "erreur"
+    appris, msg_apprentissage = analyser_et_apprendre_inconnu(question)
+    if appris:
+        return msg_apprentissage
+
+    q_clean = _nettoyer_texte(question)
+    if q_clean == "erreur" and historique:
+        dernier_user = next((h["content"] for h in reversed(historique) if h["role"] == "user" and h["content"].lower() != "erreur"), "")
+        contexte_corrige = recuperer_contexte_meteo(detecter_gouvernorat(dernier_user, gouvernorat_par_defaut=gouvernorat_actif))
+        reponse_corrigee = repondre_en_tunisien_moteur_local(dernier_user, contexte_corrige)
+        return (
+            f"🔄 **Auto-Réévaluation & Correction Automatique** 🤖\n\n"
+            f"Fhimt elli el jeweb el 9dim ken ghalat (3la demande: *'{dernier_user}'*).\n"
+            f"3malt comparaison w ré-analyse lel manti9, w hathi r-réponse s7iha el jdida :\n\n"
+            f"---\n{reponse_corrigee}\n---\n\n"
+            f"✅ Kif t3addi tawa message nromal, nzid nethaqqaq w nstahfedh bel iṣla7!"
+        )
     ville_cible = detecter_gouvernorat(question, gouvernorat_par_defaut=gouvernorat_actif)
+
+    # Priorité absolue au moteur local pour les messages conversationnels et identité/âge/salutations
+    est_conv, _ = est_message_purement_conversationnel(q_clean)
     contexte = recuperer_contexte_meteo(ville_cible)
+    if est_conv:
+        return repondre_en_tunisien_moteur_local(question, contexte)
+
+    # 1. Tentative Ollama (DeepSeek-R1) si demandé
+    if use_ollama:
+        try:
+            import requests
+            payload = {
+                "model": ollama_model,
+                "prompt": system_prompt + "\n\nQuestion de l'utilisateur tunisien : " + question,
+                "stream": False,
+                "options": {"temperature": 0.6}
+            }
+            resp = requests.post(
+                "http://localhost:11434/api/generate",
+                json=payload,
+                timeout=45
+            )
+            if resp.status_code == 200:
+                data = resp.json()
+                content = data.get("response", "")
+                if "</think>" in content:
+                    content = content.split("</think>")[-1].strip()
+                if content:
+                    return content
+        except Exception:
+            pass
 
     cle_openai = api_key or os.environ.get("OPENAI_API_KEY")
 

@@ -1,0 +1,15 @@
+{
+  "expressions": {
+    "chnia tawsas": "quelle est la météo",
+    "skhoun": "chaud",
+    "bared": "froid",
+    "mtaatar": "pluvieux",
+    " Rih": "vent",
+    "chms": "soleil",
+    "Gouvenorat": "gouvernorat",
+    "Tounes": "Tunis",
+    "Sousse": "Sousse",
+    "Sfax": "Sfax"
+  },
+  "system_prompt_derja": "Tu es un assistant météo tunisien intelligent. Tu comprends parfaitement le dialecte tunisien (Derja) et tu réponds en combinant précision scientifique et expressions tunisiennes authentiques."
+}

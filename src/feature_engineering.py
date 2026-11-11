@@ -136,11 +136,17 @@ def construire_features(df: pd.DataFrame) -> pd.DataFrame:
     df = ajouter_features_temporelles(df)
     df = ajouter_features_lag(df)
     df = ajouter_features_rolling(df)
+    # Assurer que les colonnes géographiques existent (si absentes, remplies par 0 ou défaut)
+    for col in ("lat", "lon", "altitude_m", "facade_maritime"):
+        if col not in df.columns:
+            df[col] = 0.0
     return df
 
 
 # Liste ordonnée des features candidates (hors colonnes brutes du DataFrame)
 FEATURES_CANDIDATES: list[str] = [
+    # Géographie / Localisation
+    "lat", "lon", "altitude_m", "facade_maritime",
     # Calendrier
     "day", "month", "dayofyear", "season",
     "dayofyear_sin", "dayofyear_cos", "month_sin", "month_cos", "day_sin", "day_cos",

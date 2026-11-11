@@ -42,7 +42,7 @@ import numpy as np
 import pandas as pd
 
 from src import climatology
-from src.data_loader import VILLES, fetch_data, normaliser_ville
+from src.data_loader import VILLES, INFOS_GEOGRAPHIQUES, fetch_data, normaliser_ville
 from src.feature_engineering import construire_features
 from src.train import (
     BORNES_CIBLES,
@@ -62,20 +62,26 @@ HORIZON_MAX = 7
 # Chargement des artefacts
 # --------------------------------------------------------------------------
 def charger_modele(tache: str, ville: str) -> dict:
-    """Charge un bundle modèle sauvegardé par train.py ('tmax', 'tmin', ..., 'rain')."""
+    """Charge un bundle modèle sauvegardé par train.py ('tmax', 'tmin', ..., 'rain'), avec repli sur le modèle global."""
     chemin = os.path.join(MODELES_DIR, f"{tache}_{ville}.pkl")
     if not os.path.exists(chemin):
-        raise FileNotFoundError(
-            f"Aucun modèle '{tache}' pour {ville} ({chemin}). "
-            f"Exécutez d'abord : python -m src.train --ville {ville}"
-        )
+        chemin_global = os.path.join(MODELES_DIR, f"{tache}_global.pkl")
+        if os.path.exists(chemin_global):
+            chemin = chemin_global
+        else:
+            raise FileNotFoundError(
+                f"Aucun modèle '{tache}' pour {ville} ni global ({chemin}). "
+                f"Exécutez d'abord : python -m src.train --global-model"
+            )
     return joblib.load(chemin)
 
 
 def charger_infos(ville: str) -> dict | None:
-    """Charge les métadonnées d'entraînement (info_<ville>.json), ou None."""
-    ville = normaliser_ville(ville)
-    chemin = os.path.join(MODELES_DIR, f"info_{ville}.json")
+    """Charge les métadonnées d'entraînement (info_<ville>.json ou info_global.json), ou None."""
+    ville_norm = normaliser_ville(ville)
+    chemin = os.path.join(MODELES_DIR, f"info_{ville_norm}.json")
+    if not os.path.exists(chemin):
+        chemin = os.path.join(MODELES_DIR, "info_global.json")
     if not os.path.exists(chemin):
         return None
     with open(chemin, encoding="utf-8") as f:
@@ -83,13 +89,13 @@ def charger_infos(ville: str) -> dict | None:
 
 
 def modele_existe(tache: str, ville: str) -> bool:
-    """Vérifie qu'un modèle sauvegardé est disponible."""
-    ville = normaliser_ville(ville)
-    return os.path.exists(os.path.join(MODELES_DIR, f"{tache}_{ville}.pkl"))
+    """Vérifie qu'un modèle sauvegardé est disponible (spécifique ou global)."""
+    ville_norm = normaliser_ville(ville)
+    return os.path.exists(os.path.join(MODELES_DIR, f"{tache}_{ville_norm}.pkl")) or os.path.exists(os.path.join(MODELES_DIR, f"{tache}_global.pkl"))
 
 
 def modeles_complets(ville: str) -> bool:
-    """Vrai si TOUS les modèles requis (multi-variables + pluie) sont présents."""
+    """Vrai si TOUS les modèles requis (multi-variables + pluie) sont présents (spécifique ou global)."""
     return all(modele_existe(c, ville) for c in CIBLES_REQUIS)
 
 
@@ -161,9 +167,17 @@ def predire_multijours(
 
     bundles = {cible: charger_modele(cible, ville) for cible in CIBLES_REQUIS}
 
+    info_geo = INFOS_GEOGRAPHIQUES.get(ville, {})
+    alt = info_geo.get("altitude_m", 15)
+    fac_mar = 1 if info_geo.get("facade_maritime", False) else 0
+
     fin = date.today()
     debut = fin - timedelta(days=HISTORIQUE_RECENT_JOURS)
     df_raw = fetch_data(lat, lon, debut.isoformat(), fin.isoformat(), use_cache=False)
+    df_raw["lat"] = lat
+    df_raw["lon"] = lon
+    df_raw["altitude_m"] = alt
+    df_raw["facade_maritime"] = fac_mar
 
     derniere_obs = df_raw.index[-1]
     infos = charger_infos(ville)

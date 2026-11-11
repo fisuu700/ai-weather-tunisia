@@ -953,7 +953,38 @@ Règles strictes :
             data = resp.json()
             reponse_brute = data.get("response", "")
             reponse_propre = re.sub(r'<think>.*?</think>', '', reponse_brute, flags=re.DOTALL).strip()
+
+            # --- ROBOT INTERMÉDIAIRE : POST-TRAITEMENT ET CONTRÔLE DERJA ---
             if reponse_propre:
+                prompt_correction = f"""Tu es un expert linguistique en dialecte tunisien (Derja en alphabet latin / Arabizi).
+Analyse la réponse suivante de l'assistant météo. Si elle contient du français littéraire, de l'arabe classique, ou des formulations non naturelles en Tunisie, traduis-la et réécris-la entièrement en VRAIE Derja tunisienne fluide, chaleureuse et naturelle (type SMS / Arabizi tunisien avec des expressions locales et des emojis météo).
+Garde exactes les informations météo et les chiffres (températures, vitesses de vent, noms de villes), mais change tout le reste en pur parler tunisien.
+
+Réponse brute à corriger :
+{reponse_propre}
+
+Réponse finale en 100% Derja tunisienne naturelle :"""
+
+                payload_correction = {
+                    "model": ollama_model,
+                    "prompt": prompt_correction,
+                    "stream": False,
+                    "options": {
+                        "temperature": 0.3,
+                        "top_p": 0.9,
+                        "num_predict": 400,
+                    }
+                }
+                try:
+                    resp_corr = requests.post(f"{ollama_url.rstrip('/')}/api/generate", json=payload_correction, timeout=60)
+                    if resp_corr.status_code == 200:
+                        data_corr = resp_corr.json()
+                        reponse_corr_brute = data_corr.get("response", "")
+                        reponse_finale = re.sub(r'<think>.*?</think>', '', reponse_corr_brute, flags=re.DOTALL).strip()
+                        if reponse_finale:
+                            return reponse_finale
+                except Exception:
+                    pass
                 return reponse_propre
     except Exception as e:
         return f"⚠️ Erreur de connexion avec Ollama ({ollama_url}) : {e}"

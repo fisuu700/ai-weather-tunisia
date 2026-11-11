@@ -857,8 +857,6 @@ def generer_reponse_ai_tounsi(
     historique: list[dict[str, str]],
     gouvernorat_actif: str = "Tunis",
     api_key: str | None = None,
-    use_ollama: bool = False,
-    ollama_model: str = "deepseek-r1:7b",
 ) -> str:
     """
     Point d'entrée principal :
@@ -892,31 +890,6 @@ def generer_reponse_ai_tounsi(
     contexte = recuperer_contexte_meteo(ville_cible)
     if est_conv:
         return repondre_en_tunisien_moteur_local(question, contexte)
-
-    # 1. Tentative Ollama (DeepSeek-R1) si demandé
-    if use_ollama:
-        try:
-            import requests
-            payload = {
-                "model": ollama_model,
-                "prompt": system_prompt + "\n\nQuestion de l'utilisateur tunisien : " + question,
-                "stream": False,
-                "options": {"temperature": 0.6}
-            }
-            resp = requests.post(
-                "http://localhost:11434/api/generate",
-                json=payload,
-                timeout=45
-            )
-            if resp.status_code == 200:
-                data = resp.json()
-                content = data.get("response", "")
-                if "</think>" in content:
-                    content = content.split("</think>")[-1].strip()
-                if content:
-                    return content
-        except Exception:
-            pass
 
     cle_openai = api_key or os.environ.get("OPENAI_API_KEY")
 

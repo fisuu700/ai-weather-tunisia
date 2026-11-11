@@ -573,8 +573,9 @@ if bouton_train:
             st.sidebar.error(f"❌ Échec de l'entraînement : {exc}")
 
 st.sidebar.markdown("### 🤖 Assistant IA Tounsi")
-url_ollama_custom = st.sidebar.text_input("URL Ollama", value="http://localhost:11434")
-modele_ollama_nom = st.sidebar.text_input("Modèle Ollama", value="deepseek-r1:7b")
+st.sidebar.success("🟢 Connecté à l'Assistant Tounsi (DeepSeek-R1)")
+url_ollama_custom = "http://localhost:11434"
+modele_ollama_nom = "deepseek-r1:7b"
 mode_ia = "Ollama (DeepSeek-R1 7B)"
 cle_openai_custom = ""
 

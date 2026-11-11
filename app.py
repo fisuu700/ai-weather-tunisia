@@ -916,7 +916,32 @@ with onglet_prev:
             </div>
             """)
 
-        st.markdown(f'<div class="forecast-grid">{"".join(cards_html)}</div>', unsafe_allow_html=True)
+        full_html = f'<div class="forecast-grid">{"".join(cards_html)}</div>'
+        st.components.v1.html(f"""
+        <style>
+        .forecast-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            margin: 4px 0;
+            font-family: sans-serif;
+        }}
+        .forecast-card {{
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            padding: 14px 10px;
+            text-align: center;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }}
+        .forecast-card.card-today {{
+            border-color: rgba(14, 165, 233, 0.8);
+            background: linear-gradient(180deg, rgba(14, 165, 233, 0.25) 0%, rgba(30, 58, 138, 0.25) 100%);
+        }}
+        </style>
+        {full_html}
+        """, height=160, scrolling=False)
 
         col_gauche, col_droite = st.columns([1, 2])
         with col_gauche:

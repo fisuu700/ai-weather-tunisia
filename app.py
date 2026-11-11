@@ -573,20 +573,10 @@ if bouton_train:
             st.sidebar.error(f"❌ Échec de l'entraînement : {exc}")
 
 st.sidebar.markdown("### 🤖 Assistant IA Tounsi")
-mode_ia = st.sidebar.radio(
-    "Moteur IA",
-    ["Local Derja (Défaut)", "OpenAI GPT-4o-mini"],
-    index=0,
-    help="Choisissez le moteur d'intelligence artificielle pour l'assistant météo."
-)
-
+url_ollama_custom = st.sidebar.text_input("URL Ollama", value="http://localhost:11434")
+modele_ollama_nom = st.sidebar.text_input("Modèle Ollama", value="deepseek-r1:7b")
+mode_ia = "Ollama (DeepSeek-R1 7B)"
 cle_openai_custom = ""
-if mode_ia == "OpenAI GPT-4o-mini":
-    cle_openai_custom = st.sidebar.text_input(
-        "Clé OpenAI",
-        type="password",
-        help="Entrez votre clé API OpenAI.",
-    )
 
 st.sidebar.markdown("---")
 st.sidebar.caption(
@@ -1149,6 +1139,9 @@ with onglet_chat:
                     historique=st.session_state["messages_tounsi"][:-1],
                     gouvernorat_actif=ville,
                     api_key=cle_openai_custom if "cle_openai_custom" in locals() and cle_openai_custom else None,
+                    mode_ia=mode_ia if "mode_ia" in locals() else "Local Derja (Défaut)",
+                    ollama_url=url_ollama_custom if "url_ollama_custom" in locals() else "http://localhost:11434",
+                    ollama_model=modele_ollama_nom if "modele_ollama_nom" in locals() else "deepseek-r1:7b",
                 )
                 st.markdown(reponse_ai)
                 st.session_state["messages_tounsi"].append({"role": "assistant", "content": reponse_ai})

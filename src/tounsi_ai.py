@@ -857,6 +857,9 @@ def generer_reponse_ai_tounsi(
     historique: list[dict[str, str]],
     gouvernorat_actif: str = "Tunis",
     api_key: str | None = None,
+    mode_ia: str = "Local Derja (Défaut)",
+    ollama_url: str = "http://localhost:11434",
+    ollama_model: str = "deepseek-r1:7b",
 ) -> str:
     """
     Point d'entrée principal :
@@ -864,7 +867,7 @@ def generer_reponse_ai_tounsi(
     2. Vérifie si le message est conversationnel (salutations, identité, remerciements, etc.)
     3. Détecte le gouvernorat mentionné (ou utilise le gouvernorat actif)
     4. Récupère les vraies données météo
-    5. Tente OpenAI (si clé valide fournie) ou moteur local.
+    5. Route vers Ollama (DeepSeek-R1), OpenAI ou moteur local selon le choix utilisateur.
     """
     # 0. Vérification règle d'auto-apprentissage explicite ('mot1=mot2') ou signalement "erreur"
     appris, msg_apprentissage = analyser_et_apprendre_inconnu(question)
@@ -885,22 +888,14 @@ def generer_reponse_ai_tounsi(
         )
     ville_cible = detecter_gouvernorat(question, gouvernorat_par_defaut=gouvernorat_actif)
 
-    # Priorité absolue au moteur local pour les messages conversationnels et identité/âge/salutations
+    # Suppression du retour anticipé 'est_conv' pour laisser Ollama traiter toutes les requêtes si sélectionné
     est_conv, _ = est_message_purement_conversationnel(q_clean)
     contexte = recuperer_contexte_meteo(ville_cible)
-    if est_conv:
+    if est_conv and "Ollama" not in mode_ia and "OpenAI" not in mode_ia:
         return repondre_en_tunisien_moteur_local(question, contexte)
 
-    cle_openai = api_key or os.environ.get("OPENAI_API_KEY")
-
-    # Si une clé OpenAI semble être valide (pas le placeholder)
-    if cle_openai and not cle_openai.startswith("your_api") and len(cle_openai) > 20:
-        try:
-            from openai import OpenAI
-            client = OpenAI(api_key=cle_openai)
-
-            geo = contexte.get("geo") or obtenir_info_geographique(ville_cible)
-            resume_meteo = f"""
+    geo = contexte.get("geo") or obtenir_info_geographique(ville_cible)
+    resume_meteo = f"""
 Données géographiques réelles pour {ville_cible} ({geo.get('nom_ar')}):
 - Région administrative: {geo.get('region')} ({geo.get('zone')} de la Tunisie)
 - Milieu naturel / Relief: {geo.get('milieu')} (Altitude: ~{geo.get('altitude_m')} m)
@@ -917,41 +912,48 @@ Données météo réelles pour {ville_cible} (Tunisie):
 - Vent actuel: {contexte.get('live', {}).get('wind_kmh', 'N/A')} km/h
 - Prévisions prochainement:
 """
-            for p in contexte.get("previsions", [])[:3]:
-                resume_meteo += f"  * Date {p.get('date')}: Tmax {p.get('tmax'):.1f}°C, Tmin {p.get('tmin'):.1f}°C, Risque pluie {p.get('proba_pluie', 0)*100:.0f}%, Vent {p.get('wspd'):.0f} km/h\n"
+    for p in contexte.get("previsions", [])[:3]:
+        resume_meteo += f"  * Date {p.get('date')}: Tmax {p.get('tmax'):.1f}°C, Tmin {p.get('tmin'):.1f}°C, Risque pluie {p.get('proba_pluie', 0)*100:.0f}%, Vent {p.get('wspd'):.0f} km/h\n"
 
-            system_prompt = f"""
-Enti "Tounsi Météo AI" (مساعد الطقس التونسي الذكي), assistant météo expert 100% tunisien.
-Tu parles couramment et authentiquement en dialecte tunisien (Derja en alphabet latin Arabizi / Franco-arabe et quelques mots en arabe).
-Tu comprends parfaitement le tunisien (argot, expressions météo : s5ana, zmigri, bard, mtar, rya7, b7ar, qayla, madhalla, chnowa nelbes, jaw el 5rouj).
-Tu connais parfaitement la place géographique des 24 gouvernorats tunisiens (nord, sud, sahel, tell, oasis, désert, montagnes, côtes) et leur climat.
-Utilise toujours les données météorologiques et géographiques réelles fournies ci-dessous pour être ultra précis et utile:
+    system_prompt = f"""
+Tu es un assistant IA météorologique tunisien authentique nommé "Tounsi Météo AI".
+Tu t'exprimes EXCLUSIVEMENT en dialecte tunisien (Derja en alphabet latin / Arabizi naturel et expressif, ex: "Ahla bik ya sidi", "El ta9s lyoum s5on w fama ryah", "Lézem t هز madhalla").
+Interdiction absolue de répondre en français littéraire ou en arabe classique : utilise uniquement le vrai parler tunisien de tous les jours.
+
+Données géographiques et météo réelles pour {ville_cible} :
 {resume_meteo}
-Gouvernorat ciblé: {ville_cible}.
-Règles :
-1. Réponds toujours chaleureusement en tunisien (Derja naturelle, fluide, ni trop formelle ni vulgaire).
-2. Si on te demande où se trouve une ville / sa position géographique ("win jet", "fin jéya", "place géographique", "où se trouve"), décris sa place géographique avec précision en tunisien (région, voisins, mer ou intérieur, particularité territoriale).
-3. Donne des conseils pratiques et utiles (vêtements à porter, baignade, parapluie, conduite) adaptés à la réalité géographique du gouvernorat.
-4. Sois concis, clair et sympathique avec des emojis météo.
+
+Règles strictes :
+1. Parle 100% en Derja tunisienne authentique et chaleureuse.
+2. Utilise les données météo et géographiques ci-dessus pour répondre précisément aux questions sur le temps, les températures, la pluie, le vent ou la position géographique ("win jéya").
+3. Donne des conseils pratiques adaptés (vêtements, sortie, baignade, parapluie).
+4. Sois concis, direct et utilise des emojis météo appropriés (☀️, 🌧️, 💨, 🌊, 🌡️).
 """
-            messages = [{"role": "system", "content": system_prompt}]
-            # Ajouter les derniers échanges pour le contexte
-            for h in historique[-4:]:
-                messages.append({"role": h["role"], "content": h["content"]})
-            messages.append({"role": "user", "content": question})
 
-            completion = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=messages,
-                max_tokens=450,
-                temperature=0.7,
-            )
-            texte = completion.choices[0].message.content
-            if texte:
-                return texte.strip()
-        except Exception:
-            # Fallback immédiat et transparent sur le moteur local
-            pass
+    # Appel exclusif à Ollama (DeepSeek-R1) avec timeout élargi et tuning
+    try:
+        import requests
+        prompt_complet = f"System:\n{system_prompt}\n\n"
+        for h in historique[-4:]:
+            prompt_complet += f"{h['role'].capitalize()}: {h['content']}\n"
+        prompt_complet += f"User: {question}\nAssistant:"
 
-    # Utilisation du moteur local tunisien haute précision
-    return repondre_en_tunisien_moteur_local(question, contexte)
+        payload = {
+            "model": ollama_model,
+            "prompt": prompt_complet,
+            "stream": False,
+            "options": {
+                "temperature": 0.6,
+                "top_p": 0.9,
+                "num_predict": 500,
+            }
+        }
+        resp = requests.post(f"{ollama_url.rstrip('/')}/api/generate", json=payload, timeout=120)
+        if resp.status_code == 200:
+            data = resp.json()
+            reponse_brute = data.get("response", "")
+            reponse_propre = re.sub(r'<think>.*?</think>', '', reponse_brute, flags=re.DOTALL).strip()
+            if reponse_propre:
+                return reponse_propre
+    except Exception as e:
+        return f"⚠️ Erreur de connexion avec Ollama ({ollama_url}) : {e}"

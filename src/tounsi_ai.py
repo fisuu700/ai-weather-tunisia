@@ -954,6 +954,9 @@ Règles strictes :
             reponse_brute = data.get("response", "")
             reponse_propre = re.sub(r'<think>.*?</think>', '', reponse_brute, flags=re.DOTALL).strip()
 
+            if not reponse_propre:
+                return repondre_en_tunisien_moteur_local(question, contexte)
+
             # --- ROBOT INTERMÉDIAIRE : POST-TRAITEMENT ET CONTRÔLE DERJA ---
             if reponse_propre:
                 prompt_correction = f"""Tu es un expert linguistique en dialecte tunisien (Derja en alphabet latin / Arabizi).
@@ -986,6 +989,8 @@ Réponse finale en 100% Derja tunisienne naturelle :"""
                 except Exception:
                     pass
                 return reponse_propre
+        else:
+            return repondre_en_tunisien_moteur_local(question, contexte)
     except Exception as e:
         # En cas d'erreur de connexion ou de timeout avec Ollama/ngrok, basculement automatique sur le moteur local Derja
         try:
